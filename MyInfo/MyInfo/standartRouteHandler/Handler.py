@@ -1,4 +1,4 @@
-from rest_framework.views import APIView
+﻿from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http.response import HttpResponse
 from rest_framework import status
@@ -104,8 +104,6 @@ class ImagesForAlbum(APIView):
         query = SimpleModel.PhotoAlbumsTitle.objects.get(id=albumId)
         return Response(PhotosSerializer(query.photos).data)
 
-/30
-5''0.23
 
 
 7
