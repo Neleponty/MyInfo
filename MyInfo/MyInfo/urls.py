@@ -19,6 +19,7 @@ from MyInfo.standartRouteHandler import Handler
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'news/', Handler.GetNews.as_view()),
     url(r'^categories/categoryId=(?P<categoryId>\d*)', Handler.GetNewsToCategory.as_view()),
     url(r'^categories/', Handler.CategoriesApi.as_view()),
     url(r'^news/location/newsId=(?P<newsId>\d*)', Handler.GetLocationsToNews.as_view()),

@@ -80,6 +80,11 @@ class GetLocationsToOpinions(APIView):
             filter(opinion_id=opinionId)
         return fromQuery(query)
 
+class GetNews(APIView):
+    def get(self, request, opinionId):
+        query = SimpleModel.News.objects.all()
+        return Response(NewsSerializer(query).data)
+
 
 class CategorySerializer(HyperlinkedModelSerializer):
     class Meta:
@@ -105,8 +110,6 @@ class ImagesForAlbum(APIView):
         return Response(PhotosSerializer(query.photos).data)
 
 
-
-7
 # Вопрос, как отдавать
 class CategoriesApi(APIView):
     def get(self, request):
