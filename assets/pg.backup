@@ -1,0 +1,2685 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 9.3.3
+-- Dumped by pg_dump version 9.3.3
+-- Started on 2016-12-01 04:39:22
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+--
+-- TOC entry 2373 (class 1262 OID 12029)
+-- Dependencies: 2372
+-- Name: postgres; Type: COMMENT; Schema: -; Owner: postgres
+--
+
+COMMENT ON DATABASE postgres IS 'default administrative connection database';
+
+
+--
+-- TOC entry 222 (class 3079 OID 11750)
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 2376 (class 0 OID 0)
+-- Dependencies: 222
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- TOC entry 221 (class 3079 OID 16384)
+-- Name: adminpack; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS adminpack WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 2377 (class 0 OID 0)
+-- Dependencies: 221
+-- Name: EXTENSION adminpack; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION adminpack IS 'administrative functions for PostgreSQL';
+
+
+SET search_path = public, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 203 (class 1259 OID 25185)
+-- Name: attractions; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE attractions (
+    id integer NOT NULL,
+    name text NOT NULL,
+    coord text NOT NULL,
+    description text,
+    image text
+);
+
+
+ALTER TABLE public.attractions OWNER TO postgres;
+
+--
+-- TOC entry 177 (class 1259 OID 16427)
+-- Name: auth_group; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE auth_group (
+    id integer NOT NULL,
+    name character varying(80) NOT NULL
+);
+
+
+ALTER TABLE public.auth_group OWNER TO postgres;
+
+--
+-- TOC entry 176 (class 1259 OID 16425)
+-- Name: auth_group_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE auth_group_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.auth_group_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2378 (class 0 OID 0)
+-- Dependencies: 176
+-- Name: auth_group_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE auth_group_id_seq OWNED BY auth_group.id;
+
+
+--
+-- TOC entry 179 (class 1259 OID 16437)
+-- Name: auth_group_permissions; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE auth_group_permissions (
+    id integer NOT NULL,
+    group_id integer NOT NULL,
+    permission_id integer NOT NULL
+);
+
+
+ALTER TABLE public.auth_group_permissions OWNER TO postgres;
+
+--
+-- TOC entry 178 (class 1259 OID 16435)
+-- Name: auth_group_permissions_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE auth_group_permissions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.auth_group_permissions_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2379 (class 0 OID 0)
+-- Dependencies: 178
+-- Name: auth_group_permissions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE auth_group_permissions_id_seq OWNED BY auth_group_permissions.id;
+
+
+--
+-- TOC entry 175 (class 1259 OID 16419)
+-- Name: auth_permission; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE auth_permission (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    content_type_id integer NOT NULL,
+    codename character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.auth_permission OWNER TO postgres;
+
+--
+-- TOC entry 174 (class 1259 OID 16417)
+-- Name: auth_permission_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE auth_permission_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.auth_permission_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2380 (class 0 OID 0)
+-- Dependencies: 174
+-- Name: auth_permission_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE auth_permission_id_seq OWNED BY auth_permission.id;
+
+
+--
+-- TOC entry 181 (class 1259 OID 16445)
+-- Name: auth_user; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE auth_user (
+    id integer NOT NULL,
+    password character varying(128) NOT NULL,
+    last_login timestamp with time zone,
+    is_superuser boolean NOT NULL,
+    username character varying(150) NOT NULL,
+    first_name character varying(30) NOT NULL,
+    last_name character varying(30) NOT NULL,
+    email character varying(254) NOT NULL,
+    is_staff boolean NOT NULL,
+    is_active boolean NOT NULL,
+    date_joined timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.auth_user OWNER TO postgres;
+
+--
+-- TOC entry 183 (class 1259 OID 16455)
+-- Name: auth_user_groups; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE auth_user_groups (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    group_id integer NOT NULL
+);
+
+
+ALTER TABLE public.auth_user_groups OWNER TO postgres;
+
+--
+-- TOC entry 182 (class 1259 OID 16453)
+-- Name: auth_user_groups_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE auth_user_groups_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.auth_user_groups_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2381 (class 0 OID 0)
+-- Dependencies: 182
+-- Name: auth_user_groups_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE auth_user_groups_id_seq OWNED BY auth_user_groups.id;
+
+
+--
+-- TOC entry 180 (class 1259 OID 16443)
+-- Name: auth_user_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE auth_user_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.auth_user_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2382 (class 0 OID 0)
+-- Dependencies: 180
+-- Name: auth_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE auth_user_id_seq OWNED BY auth_user.id;
+
+
+--
+-- TOC entry 185 (class 1259 OID 16463)
+-- Name: auth_user_user_permissions; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE auth_user_user_permissions (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    permission_id integer NOT NULL
+);
+
+
+ALTER TABLE public.auth_user_user_permissions OWNER TO postgres;
+
+--
+-- TOC entry 184 (class 1259 OID 16461)
+-- Name: auth_user_user_permissions_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE auth_user_user_permissions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.auth_user_user_permissions_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2383 (class 0 OID 0)
+-- Dependencies: 184
+-- Name: auth_user_user_permissions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE auth_user_user_permissions_id_seq OWNED BY auth_user_user_permissions.id;
+
+
+--
+-- TOC entry 204 (class 1259 OID 25193)
+-- Name: categories; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE categories (
+    name character(100) NOT NULL,
+    id integer NOT NULL
+);
+
+
+ALTER TABLE public.categories OWNER TO postgres;
+
+--
+-- TOC entry 205 (class 1259 OID 25198)
+-- Name: categories_links; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE categories_links (
+    parent_id integer NOT NULL,
+    child_id integer NOT NULL,
+    id integer NOT NULL
+);
+
+
+ALTER TABLE public.categories_links OWNER TO postgres;
+
+--
+-- TOC entry 187 (class 1259 OID 16523)
+-- Name: django_admin_log; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE django_admin_log (
+    id integer NOT NULL,
+    action_time timestamp with time zone NOT NULL,
+    object_id text,
+    object_repr character varying(200) NOT NULL,
+    action_flag smallint NOT NULL,
+    change_message text NOT NULL,
+    content_type_id integer,
+    user_id integer NOT NULL,
+    CONSTRAINT django_admin_log_action_flag_check CHECK ((action_flag >= 0))
+);
+
+
+ALTER TABLE public.django_admin_log OWNER TO postgres;
+
+--
+-- TOC entry 186 (class 1259 OID 16521)
+-- Name: django_admin_log_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE django_admin_log_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.django_admin_log_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2384 (class 0 OID 0)
+-- Dependencies: 186
+-- Name: django_admin_log_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE django_admin_log_id_seq OWNED BY django_admin_log.id;
+
+
+--
+-- TOC entry 173 (class 1259 OID 16409)
+-- Name: django_content_type; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE django_content_type (
+    id integer NOT NULL,
+    app_label character varying(100) NOT NULL,
+    model character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.django_content_type OWNER TO postgres;
+
+--
+-- TOC entry 172 (class 1259 OID 16407)
+-- Name: django_content_type_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE django_content_type_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.django_content_type_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2385 (class 0 OID 0)
+-- Dependencies: 172
+-- Name: django_content_type_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE django_content_type_id_seq OWNED BY django_content_type.id;
+
+
+--
+-- TOC entry 171 (class 1259 OID 16398)
+-- Name: django_migrations; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE django_migrations (
+    id integer NOT NULL,
+    app character varying(255) NOT NULL,
+    name character varying(255) NOT NULL,
+    applied timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.django_migrations OWNER TO postgres;
+
+--
+-- TOC entry 170 (class 1259 OID 16396)
+-- Name: django_migrations_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE django_migrations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.django_migrations_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2386 (class 0 OID 0)
+-- Dependencies: 170
+-- Name: django_migrations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE django_migrations_id_seq OWNED BY django_migrations.id;
+
+
+--
+-- TOC entry 188 (class 1259 OID 16551)
+-- Name: django_session; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE django_session (
+    session_key character varying(40) NOT NULL,
+    session_data text NOT NULL,
+    expire_date timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.django_session OWNER TO postgres;
+
+--
+-- TOC entry 208 (class 1259 OID 25230)
+-- Name: location_news_event; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE location_news_event (
+    id integer NOT NULL,
+    news_id integer NOT NULL,
+    coord text NOT NULL
+);
+
+
+ALTER TABLE public.location_news_event OWNER TO postgres;
+
+--
+-- TOC entry 207 (class 1259 OID 25208)
+-- Name: news; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE news (
+    id integer NOT NULL,
+    pub_date timestamp without time zone DEFAULT now() NOT NULL,
+    header character varying NOT NULL,
+    content text NOT NULL,
+    id_categ integer NOT NULL,
+    is_fav boolean DEFAULT false NOT NULL,
+    likes integer DEFAULT 0 NOT NULL,
+    image_id integer NOT NULL,
+    scale integer DEFAULT 0
+);
+
+
+ALTER TABLE public.news OWNER TO postgres;
+
+--
+-- TOC entry 209 (class 1259 OID 25243)
+-- Name: news_photos; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE news_photos (
+    id integer NOT NULL,
+    photo_id integer NOT NULL,
+    news_id integer NOT NULL
+);
+
+
+ALTER TABLE public.news_photos OWNER TO postgres;
+
+--
+-- TOC entry 210 (class 1259 OID 25258)
+-- Name: opinions; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE opinions (
+    id integer NOT NULL,
+    pub_date timestamp without time zone DEFAULT now() NOT NULL,
+    title text NOT NULL,
+    headline text,
+    image text,
+    text text
+);
+
+
+ALTER TABLE public.opinions OWNER TO postgres;
+
+--
+-- TOC entry 213 (class 1259 OID 25290)
+-- Name: opinions_images; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE opinions_images (
+    id integer NOT NULL,
+    opinion_id integer NOT NULL,
+    photo_id integer NOT NULL
+);
+
+
+ALTER TABLE public.opinions_images OWNER TO postgres;
+
+--
+-- TOC entry 214 (class 1259 OID 25305)
+-- Name: opinions_locations; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE opinions_locations (
+    id integer NOT NULL,
+    opinion_id integer NOT NULL,
+    coord text NOT NULL
+);
+
+
+ALTER TABLE public.opinions_locations OWNER TO postgres;
+
+--
+-- TOC entry 212 (class 1259 OID 25275)
+-- Name: opinionstotags; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE opinionstotags (
+    id integer NOT NULL,
+    opinions_id integer NOT NULL,
+    tags_id integer NOT NULL
+);
+
+
+ALTER TABLE public.opinionstotags OWNER TO postgres;
+
+--
+-- TOC entry 215 (class 1259 OID 25313)
+-- Name: photoalbums_title; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE photoalbums_title (
+    id integer NOT NULL,
+    name text NOT NULL,
+    description text,
+    title_image integer
+);
+
+
+ALTER TABLE public.photoalbums_title OWNER TO postgres;
+
+--
+-- TOC entry 216 (class 1259 OID 25326)
+-- Name: photos_in_albums; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE photos_in_albums (
+    id integer NOT NULL,
+    album_id integer NOT NULL,
+    photo_id integer NOT NULL
+);
+
+
+ALTER TABLE public.photos_in_albums OWNER TO postgres;
+
+--
+-- TOC entry 206 (class 1259 OID 25203)
+-- Name: photos_urls; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE photos_urls (
+    id integer NOT NULL,
+    path character varying(300) NOT NULL
+);
+
+
+ALTER TABLE public.photos_urls OWNER TO postgres;
+
+--
+-- TOC entry 190 (class 1259 OID 16602)
+-- Name: standartRouteHandler_cityarea; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE "standartRouteHandler_cityarea" (
+    id integer NOT NULL,
+    lr integer NOT NULL,
+    name character varying(50) NOT NULL,
+    world_area_id integer NOT NULL
+);
+
+
+ALTER TABLE public."standartRouteHandler_cityarea" OWNER TO postgres;
+
+--
+-- TOC entry 191 (class 1259 OID 16607)
+-- Name: standartRouteHandler_coord; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE "standartRouteHandler_coord" (
+    id integer NOT NULL,
+    latitude double precision NOT NULL,
+    longitude double precision NOT NULL,
+    lr integer NOT NULL
+);
+
+
+ALTER TABLE public."standartRouteHandler_coord" OWNER TO postgres;
+
+--
+-- TOC entry 192 (class 1259 OID 16612)
+-- Name: standartRouteHandler_coordlist; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE "standartRouteHandler_coordlist" (
+    id integer NOT NULL,
+    coord_id integer NOT NULL,
+    "sightPlace_id" integer NOT NULL
+);
+
+
+ALTER TABLE public."standartRouteHandler_coordlist" OWNER TO postgres;
+
+--
+-- TOC entry 193 (class 1259 OID 16617)
+-- Name: standartRouteHandler_event; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE "standartRouteHandler_event" (
+    id integer NOT NULL,
+    type character varying(500) NOT NULL,
+    name character varying(100) NOT NULL,
+    description text NOT NULL,
+    "time" timestamp with time zone NOT NULL,
+    additional_info character varying(5000) NOT NULL,
+    coord_id integer NOT NULL,
+    photos_id integer NOT NULL,
+    sight_place_id integer NOT NULL
+);
+
+
+ALTER TABLE public."standartRouteHandler_event" OWNER TO postgres;
+
+--
+-- TOC entry 194 (class 1259 OID 16625)
+-- Name: standartRouteHandler_eventreview; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE "standartRouteHandler_eventreview" (
+    id integer NOT NULL,
+    event_id integer NOT NULL,
+    review_id integer NOT NULL
+);
+
+
+ALTER TABLE public."standartRouteHandler_eventreview" OWNER TO postgres;
+
+--
+-- TOC entry 195 (class 1259 OID 16630)
+-- Name: standartRouteHandler_likes; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE "standartRouteHandler_likes" (
+    id integer NOT NULL,
+    name character varying(500) NOT NULL,
+    "time" timestamp with time zone NOT NULL,
+    sight_place_id integer NOT NULL
+);
+
+
+ALTER TABLE public."standartRouteHandler_likes" OWNER TO postgres;
+
+--
+-- TOC entry 196 (class 1259 OID 16638)
+-- Name: standartRouteHandler_news; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE "standartRouteHandler_news" (
+    id integer NOT NULL,
+    "time" timestamp with time zone NOT NULL,
+    header character varying(2000) NOT NULL,
+    text text NOT NULL,
+    coord_id integer NOT NULL,
+    photos_id integer NOT NULL,
+    sight_place_id integer NOT NULL
+);
+
+
+ALTER TABLE public."standartRouteHandler_news" OWNER TO postgres;
+
+--
+-- TOC entry 197 (class 1259 OID 16646)
+-- Name: standartRouteHandler_photoalbum; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE "standartRouteHandler_photoalbum" (
+    id integer NOT NULL,
+    urls text NOT NULL,
+    name character varying(100) NOT NULL,
+    description text NOT NULL
+);
+
+
+ALTER TABLE public."standartRouteHandler_photoalbum" OWNER TO postgres;
+
+--
+-- TOC entry 198 (class 1259 OID 16654)
+-- Name: standartRouteHandler_review; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE "standartRouteHandler_review" (
+    id integer NOT NULL,
+    estimate character varying(5000) NOT NULL,
+    text text NOT NULL,
+    photos_id integer NOT NULL
+);
+
+
+ALTER TABLE public."standartRouteHandler_review" OWNER TO postgres;
+
+--
+-- TOC entry 199 (class 1259 OID 16662)
+-- Name: standartRouteHandler_sightplace; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE "standartRouteHandler_sightplace" (
+    id integer NOT NULL,
+    name character varying(50) NOT NULL,
+    type character varying(50) NOT NULL,
+    description text NOT NULL,
+    "visitCount" integer NOT NULL,
+    "likedCount" integer NOT NULL,
+    "cityArea_id" integer NOT NULL,
+    photos_id integer NOT NULL
+);
+
+
+ALTER TABLE public."standartRouteHandler_sightplace" OWNER TO postgres;
+
+--
+-- TOC entry 200 (class 1259 OID 16670)
+-- Name: standartRouteHandler_sightreview; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE "standartRouteHandler_sightreview" (
+    id integer NOT NULL,
+    review_id integer NOT NULL,
+    sight_id integer NOT NULL
+);
+
+
+ALTER TABLE public."standartRouteHandler_sightreview" OWNER TO postgres;
+
+--
+-- TOC entry 201 (class 1259 OID 16675)
+-- Name: standartRouteHandler_travelsways; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE "standartRouteHandler_travelsways" (
+    id integer NOT NULL,
+    lr_relation integer NOT NULL,
+    ooord_id integer NOT NULL
+);
+
+
+ALTER TABLE public."standartRouteHandler_travelsways" OWNER TO postgres;
+
+--
+-- TOC entry 202 (class 1259 OID 16680)
+-- Name: standartRouteHandler_worldarea; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE "standartRouteHandler_worldarea" (
+    id integer NOT NULL,
+    lr integer NOT NULL,
+    name character varying(50) NOT NULL
+);
+
+
+ALTER TABLE public."standartRouteHandler_worldarea" OWNER TO postgres;
+
+--
+-- TOC entry 211 (class 1259 OID 25267)
+-- Name: tags; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE tags (
+    id integer NOT NULL,
+    name text NOT NULL
+);
+
+
+ALTER TABLE public.tags OWNER TO postgres;
+
+--
+-- TOC entry 218 (class 1259 OID 25349)
+-- Name: tour_point; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE tour_point (
+    id integer NOT NULL,
+    name text NOT NULL,
+    coordinates text NOT NULL,
+    description text,
+    image_id integer
+);
+
+
+ALTER TABLE public.tour_point OWNER TO postgres;
+
+--
+-- TOC entry 217 (class 1259 OID 25341)
+-- Name: tours; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE tours (
+    id integer NOT NULL,
+    name text NOT NULL,
+    description text
+);
+
+
+ALTER TABLE public.tours OWNER TO postgres;
+
+--
+-- TOC entry 219 (class 1259 OID 25362)
+-- Name: tours_to_points; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE tours_to_points (
+    id integer NOT NULL,
+    tours_id integer NOT NULL,
+    point_id integer NOT NULL
+);
+
+
+ALTER TABLE public.tours_to_points OWNER TO postgres;
+
+--
+-- TOC entry 220 (class 1259 OID 25377)
+-- Name: users; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE users (
+    id integer NOT NULL,
+    login text NOT NULL,
+    name text,
+    hashpass text NOT NULL
+);
+
+
+ALTER TABLE public.users OWNER TO postgres;
+
+--
+-- TOC entry 189 (class 1259 OID 16597)
+-- Name: worldarea; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE worldarea (
+    "Code" character varying(2),
+    "Name" character varying(50),
+    id integer NOT NULL
+);
+
+
+ALTER TABLE public.worldarea OWNER TO postgres;
+
+--
+-- TOC entry 2027 (class 2604 OID 16430)
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_group ALTER COLUMN id SET DEFAULT nextval('auth_group_id_seq'::regclass);
+
+
+--
+-- TOC entry 2028 (class 2604 OID 16440)
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_group_permissions ALTER COLUMN id SET DEFAULT nextval('auth_group_permissions_id_seq'::regclass);
+
+
+--
+-- TOC entry 2026 (class 2604 OID 16422)
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_permission ALTER COLUMN id SET DEFAULT nextval('auth_permission_id_seq'::regclass);
+
+
+--
+-- TOC entry 2029 (class 2604 OID 16448)
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_user ALTER COLUMN id SET DEFAULT nextval('auth_user_id_seq'::regclass);
+
+
+--
+-- TOC entry 2030 (class 2604 OID 16458)
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_user_groups ALTER COLUMN id SET DEFAULT nextval('auth_user_groups_id_seq'::regclass);
+
+
+--
+-- TOC entry 2031 (class 2604 OID 16466)
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_user_user_permissions ALTER COLUMN id SET DEFAULT nextval('auth_user_user_permissions_id_seq'::regclass);
+
+
+--
+-- TOC entry 2032 (class 2604 OID 16526)
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY django_admin_log ALTER COLUMN id SET DEFAULT nextval('django_admin_log_id_seq'::regclass);
+
+
+--
+-- TOC entry 2025 (class 2604 OID 16412)
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY django_content_type ALTER COLUMN id SET DEFAULT nextval('django_content_type_id_seq'::regclass);
+
+
+--
+-- TOC entry 2024 (class 2604 OID 16401)
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY django_migrations ALTER COLUMN id SET DEFAULT nextval('django_migrations_id_seq'::regclass);
+
+
+--
+-- TOC entry 2350 (class 0 OID 25185)
+-- Dependencies: 203
+-- Data for Name: attractions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2324 (class 0 OID 16427)
+-- Dependencies: 177
+-- Data for Name: auth_group; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2387 (class 0 OID 0)
+-- Dependencies: 176
+-- Name: auth_group_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('auth_group_id_seq', 1, false);
+
+
+--
+-- TOC entry 2326 (class 0 OID 16437)
+-- Dependencies: 179
+-- Data for Name: auth_group_permissions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2388 (class 0 OID 0)
+-- Dependencies: 178
+-- Name: auth_group_permissions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('auth_group_permissions_id_seq', 1, false);
+
+
+--
+-- TOC entry 2322 (class 0 OID 16419)
+-- Dependencies: 175
+-- Data for Name: auth_permission; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO auth_permission (id, name, content_type_id, codename) VALUES (1, 'Can add log entry', 1, 'add_logentry');
+INSERT INTO auth_permission (id, name, content_type_id, codename) VALUES (2, 'Can change log entry', 1, 'change_logentry');
+INSERT INTO auth_permission (id, name, content_type_id, codename) VALUES (3, 'Can delete log entry', 1, 'delete_logentry');
+INSERT INTO auth_permission (id, name, content_type_id, codename) VALUES (4, 'Can add user', 2, 'add_user');
+INSERT INTO auth_permission (id, name, content_type_id, codename) VALUES (5, 'Can change user', 2, 'change_user');
+INSERT INTO auth_permission (id, name, content_type_id, codename) VALUES (6, 'Can delete user', 2, 'delete_user');
+INSERT INTO auth_permission (id, name, content_type_id, codename) VALUES (7, 'Can add group', 3, 'add_group');
+INSERT INTO auth_permission (id, name, content_type_id, codename) VALUES (8, 'Can change group', 3, 'change_group');
+INSERT INTO auth_permission (id, name, content_type_id, codename) VALUES (9, 'Can delete group', 3, 'delete_group');
+INSERT INTO auth_permission (id, name, content_type_id, codename) VALUES (10, 'Can add permission', 4, 'add_permission');
+INSERT INTO auth_permission (id, name, content_type_id, codename) VALUES (11, 'Can change permission', 4, 'change_permission');
+INSERT INTO auth_permission (id, name, content_type_id, codename) VALUES (12, 'Can delete permission', 4, 'delete_permission');
+INSERT INTO auth_permission (id, name, content_type_id, codename) VALUES (13, 'Can add content type', 5, 'add_contenttype');
+INSERT INTO auth_permission (id, name, content_type_id, codename) VALUES (14, 'Can change content type', 5, 'change_contenttype');
+INSERT INTO auth_permission (id, name, content_type_id, codename) VALUES (15, 'Can delete content type', 5, 'delete_contenttype');
+INSERT INTO auth_permission (id, name, content_type_id, codename) VALUES (16, 'Can add session', 6, 'add_session');
+INSERT INTO auth_permission (id, name, content_type_id, codename) VALUES (17, 'Can change session', 6, 'change_session');
+INSERT INTO auth_permission (id, name, content_type_id, codename) VALUES (18, 'Can delete session', 6, 'delete_session');
+
+
+--
+-- TOC entry 2389 (class 0 OID 0)
+-- Dependencies: 174
+-- Name: auth_permission_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('auth_permission_id_seq', 18, true);
+
+
+--
+-- TOC entry 2328 (class 0 OID 16445)
+-- Dependencies: 181
+-- Data for Name: auth_user; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2330 (class 0 OID 16455)
+-- Dependencies: 183
+-- Data for Name: auth_user_groups; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2390 (class 0 OID 0)
+-- Dependencies: 182
+-- Name: auth_user_groups_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('auth_user_groups_id_seq', 1, false);
+
+
+--
+-- TOC entry 2391 (class 0 OID 0)
+-- Dependencies: 180
+-- Name: auth_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('auth_user_id_seq', 1, false);
+
+
+--
+-- TOC entry 2332 (class 0 OID 16463)
+-- Dependencies: 185
+-- Data for Name: auth_user_user_permissions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2392 (class 0 OID 0)
+-- Dependencies: 184
+-- Name: auth_user_user_permissions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('auth_user_user_permissions_id_seq', 1, false);
+
+
+--
+-- TOC entry 2351 (class 0 OID 25193)
+-- Dependencies: 204
+-- Data for Name: categories; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO categories (name, id) VALUES ('Спорт                                                                                               ', 1);
+INSERT INTO categories (name, id) VALUES ('Музыка                                                                                              ', 2);
+INSERT INTO categories (name, id) VALUES ('Волейбол                                                                                            ', 3);
+INSERT INTO categories (name, id) VALUES ('Баскетбол                                                                                           ', 4);
+INSERT INTO categories (name, id) VALUES ('Футбол                                                                                              ', 5);
+INSERT INTO categories (name, id) VALUES ('Мужская сборная                                                                                     ', 6);
+INSERT INTO categories (name, id) VALUES ('Женская сборная                                                                                     ', 7);
+
+
+--
+-- TOC entry 2352 (class 0 OID 25198)
+-- Dependencies: 205
+-- Data for Name: categories_links; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2334 (class 0 OID 16523)
+-- Dependencies: 187
+-- Data for Name: django_admin_log; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2393 (class 0 OID 0)
+-- Dependencies: 186
+-- Name: django_admin_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('django_admin_log_id_seq', 1, false);
+
+
+--
+-- TOC entry 2320 (class 0 OID 16409)
+-- Dependencies: 173
+-- Data for Name: django_content_type; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO django_content_type (id, app_label, model) VALUES (1, 'admin', 'logentry');
+INSERT INTO django_content_type (id, app_label, model) VALUES (2, 'auth', 'user');
+INSERT INTO django_content_type (id, app_label, model) VALUES (3, 'auth', 'group');
+INSERT INTO django_content_type (id, app_label, model) VALUES (4, 'auth', 'permission');
+INSERT INTO django_content_type (id, app_label, model) VALUES (5, 'contenttypes', 'contenttype');
+INSERT INTO django_content_type (id, app_label, model) VALUES (6, 'sessions', 'session');
+
+
+--
+-- TOC entry 2394 (class 0 OID 0)
+-- Dependencies: 172
+-- Name: django_content_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('django_content_type_id_seq', 6, true);
+
+
+--
+-- TOC entry 2318 (class 0 OID 16398)
+-- Dependencies: 171
+-- Data for Name: django_migrations; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO django_migrations (id, app, name, applied) VALUES (1, 'contenttypes', '0001_initial', '2016-11-13 00:20:13.645326+06');
+INSERT INTO django_migrations (id, app, name, applied) VALUES (2, 'auth', '0001_initial', '2016-11-13 00:20:14.403912+06');
+INSERT INTO django_migrations (id, app, name, applied) VALUES (3, 'admin', '0001_initial', '2016-11-13 00:20:14.562646+06');
+INSERT INTO django_migrations (id, app, name, applied) VALUES (4, 'admin', '0002_logentry_remove_auto_add', '2016-11-13 00:20:14.601704+06');
+INSERT INTO django_migrations (id, app, name, applied) VALUES (5, 'contenttypes', '0002_remove_content_type_name', '2016-11-13 00:20:14.718375+06');
+INSERT INTO django_migrations (id, app, name, applied) VALUES (6, 'auth', '0002_alter_permission_name_max_length', '2016-11-13 00:20:14.757933+06');
+INSERT INTO django_migrations (id, app, name, applied) VALUES (7, 'auth', '0003_alter_user_email_max_length', '2016-11-13 00:20:14.79699+06');
+INSERT INTO django_migrations (id, app, name, applied) VALUES (8, 'auth', '0004_alter_user_username_opts', '2016-11-13 00:20:14.83605+06');
+INSERT INTO django_migrations (id, app, name, applied) VALUES (9, 'auth', '0005_alter_user_last_login_null', '2016-11-13 00:20:14.881114+06');
+INSERT INTO django_migrations (id, app, name, applied) VALUES (10, 'auth', '0006_require_contenttypes_0002', '2016-11-13 00:20:14.890128+06');
+INSERT INTO django_migrations (id, app, name, applied) VALUES (11, 'auth', '0007_alter_validators_add_error_messages', '2016-11-13 00:20:14.962733+06');
+INSERT INTO django_migrations (id, app, name, applied) VALUES (12, 'auth', '0008_alter_user_username_max_length', '2016-11-13 00:20:15.018317+06');
+INSERT INTO django_migrations (id, app, name, applied) VALUES (13, 'sessions', '0001_initial', '2016-11-13 00:20:15.134986+06');
+INSERT INTO django_migrations (id, app, name, applied) VALUES (14, 'standartRouteHandler', '0001_initial', '2016-11-13 00:24:31.406272+06');
+INSERT INTO django_migrations (id, app, name, applied) VALUES (15, 'standartRouteHandler', '0002_auto_20161112_2346', '2016-11-13 00:51:21.068564+06');
+INSERT INTO django_migrations (id, app, name, applied) VALUES (16, 'standartRouteHandler', '0003_auto_20161113_1411', '2016-11-13 15:12:07.784645+06');
+INSERT INTO django_migrations (id, app, name, applied) VALUES (17, 'standartRouteHandler', '0002_delete_commonmodel', '2016-11-13 22:32:21.320935+06');
+
+
+--
+-- TOC entry 2395 (class 0 OID 0)
+-- Dependencies: 170
+-- Name: django_migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('django_migrations_id_seq', 17, true);
+
+
+--
+-- TOC entry 2335 (class 0 OID 16551)
+-- Dependencies: 188
+-- Data for Name: django_session; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2355 (class 0 OID 25230)
+-- Dependencies: 208
+-- Data for Name: location_news_event; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2354 (class 0 OID 25208)
+-- Dependencies: 207
+-- Data for Name: news; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO news (id, pub_date, header, content, id_categ, is_fav, likes, image_id, scale) VALUES (1, '2016-07-04 20:30:38', 'Исландия с честью покинул
+а чемпионат Европы', 'Вчера прошел матч 1/4 финала чемпионата Европы по футболу между сборными Франции и Исланди
+и. Счет 5:2 в пользу французов. Исландия пропустила 4 мяча  первом тайме и с честью продолжила борьбу во втором, проявив себ
+я как и как суровые нордические воины, и как отличная команда, уважающая своих боельщиков.', 5, true, 5, 1, 0);
+INSERT INTO news (id, pub_date, header, content, id_categ, is_fav, likes, image_id, scale) VALUES (2, '2016-07-04 20:35:52', 'Волейбол', 'ураураураураура победы', 3, true, 10, 2, 1);
+INSERT INTO news (id, pub_date, header, content, id_categ, is_fav, likes, image_id, scale) VALUES (3, '2016-07-04 20:37:52', 'Новости спорта', 'Крутые новости', 1, false, 0, 3, 2);
+INSERT INTO news (id, pub_date, header, content, id_categ, is_fav, likes, image_id, scale) VALUES (4, '2016-07-04 20:38:36', 'Музыка', 'гитары рулят', 2, false, 50, 4, 0);
+INSERT INTO news (id, pub_date, header, content, id_categ, is_fav, likes, image_id, scale) VALUES (5, '2016-07-04 20:39:31', 'Новые победы', 'Мужская сборная победила; нужно больше побед', 6, true, 0, 1, 1);
+INSERT INTO news (id, pub_date, header, content, id_categ, is_fav, likes, image_id, scale) VALUES (6, '2016-09-10 05:50:46', 'test', 'test', 5, false, 0, 0, 3);
+
+
+--
+-- TOC entry 2356 (class 0 OID 25243)
+-- Dependencies: 209
+-- Data for Name: news_photos; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO news_photos (id, photo_id, news_id) VALUES (1, 1, 1);
+INSERT INTO news_photos (id, photo_id, news_id) VALUES (2, 1, 2);
+INSERT INTO news_photos (id, photo_id, news_id) VALUES (3, 3, 1);
+INSERT INTO news_photos (id, photo_id, news_id) VALUES (4, 2, 1);
+INSERT INTO news_photos (id, photo_id, news_id) VALUES (5, 1, 3);
+INSERT INTO news_photos (id, photo_id, news_id) VALUES (6, 3, 4);
+INSERT INTO news_photos (id, photo_id, news_id) VALUES (7, 2, 5);
+INSERT INTO news_photos (id, photo_id, news_id) VALUES (8, 1, 5);
+
+
+--
+-- TOC entry 2357 (class 0 OID 25258)
+-- Dependencies: 210
+-- Data for Name: opinions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO opinions (id, pub_date, title, headline, image, text) VALUES (1, '2016-10-20 04:58:33', 'Просто спорт или призвание?', 'Слышали ли Вы когда-нибудь о парусном спорте? Знакомы ли с такими его видами как виндсёрфинг и кайтинг? ', NULL, 'Слышали ли Вы когда-нибудь о парусном спорте? Знакомы ли с такими его видами как виндсёрфинг и кайтинг? 
+Основой кайтинга является катание на доске, управление которой происходит с помощью воздушного змея, удерживаемого спортсменом. Кайтинг не является сезонным видом спорта, поскольку летом тренировки проводятся на воде, а зимой происходит так называемая «смена доски», и спортсмены (кайтеры) встают на сноуборды и горные лыжи. Кайтеры обладают качественной общей физической подготовкой, у них хорошо развиты дыхательная система  и связочный аппарат. 
+Виндсёрфинг также является разновидностью индивидуального парусного спорта, заключающегося в управлении на водной поверхности доской с парусом, установленном на ней. Сезонность для виндсёрферов играет немалую роль, но это не мешает спортсменам достигать новых высот. Ведь, как говорится: «тяжело в учении – легко в бою».
+Виндсёрфинг и кайтинг имеют две разновидности: спортсмены здесь соревнуются в гоночной дисциплине и фристайле (прыжках). 
+Интересно, не правда ли? Вы удивитесь ещё больше, когда узнаете, что и в городе Екатеринбурге существует ряд организаций, обучающих людей этим видам спорта. 
+Мы взяли интервью у Гаращенко Дениса Валерьевича, руководителя Уральской Бординговой Ассоциации и тренера детской юношеской спортивной школы Верх-Исетского района. И вот, что он нам рассказал: «Я начал заниматься парусным спортом в 1997 году на озере Шарташ. По началу, для меня это было лишь активным отдыхом, но позже мои занятия переросли в единственное хобби и образ жизни. Это увлекло до такой степени, что я продал бизнес и с головой погрузился в спорт. Я открывал школы в Египте и во Вьетнаме, но, спустя время, решил сконцентрировать все усилия на школе в Екатеринбурге».
+Сейчас в нашем городе парусным спортом занимаются спортсмены разных возрастов, 15 из них являются постоянными участниками чемпионатов России и различных международных соревнований. Артём Геращенко, к примеру, является чемпионом Европы 2012 года, а также двукратным чемпионом мира 2013 и 2014-го годов по сноукайтингу. Сейчас большую часть времени Артём посвящает тренерской работе, подавая молодым ребятам отличный пример упорства и целеустремленности. А в 2015-ом году Руслан Сиражетдинов на Чемпионате России, прошедшем в Тольятти, представлял город Екатеринбург и вернулся домой с победой.
+Парусный спорт нельзя назвать простым. Здесь не бывает перерывов на тренировке, а переменчивая уральская погода зачастую настигает спортсменов холодными ветрами прямо на воде, именно поэтому закаливание играет для них немаловажную роль. Стоит также отметить, что плохие погодные условия не влекут за собой отмену занятий для спортсменов, тренеры всегда найдут для своих воспитанников некую замену – будь то игра в волейбол или футбол, проведение кросса или подготовка материальной части (ремонт снаряжения, настройка).
+К сожалению, за последние несколько лет государственное финансирование данного вида спорта значительно сократилось, и большая часть финансовых расходов легла на плечи спортсменов и их родителей. Однако, несмотря на сложности, парусный спорт является вполне доступным для среднестатистического гражданина. Дети занимаются бесплатно. Для взрослых, час обучения на виндсёрфинге стоит 1000 рублей, а прокат полного комплекта снаряжения – 500 рублей в час. 
+Спортсмены открывают летний сезон с 1 мая по 1 октября, зимний же сезон длится с 15 ноября по 15 апреля.
+Наши журналисты также поговорили с тренером ДЮСШ «Виктория» Горбуновым Анатолием Павловичем (КМС, чемпионом Свердловской области 1980 года). Помимо Анатолия Павловича, штатными тренерами этой школы являются Горбунова Наталья Георгиевна и Сергей Юрьевич Кожин, их воспитанник. В планы руководства школы «Виктория» входит масштабная застройка территории: здесь должны появиться элленги (места для хранения лодок), новые раздевалки и лыжная база.
+Анатолий Павлович рассказал нам о гребле – виде спорта, подвидами которого являются гребля на байдарках, каноэ и лодках класса «Дракон». Гребля заряжает спортсменов здоровьем, укрепляет руки, спину и плечевой пояс. К слову, «Драконы» представляют собой атмосферное зрелище, погружающее зрителей в культуру Китая. По разным краям лодки сидит равное количество человек (гребцы); впереди - барабанщик, отбивающий различные ритмы; а позади, «в хвосте», - рулевой.
+Спортсмены участвуют в соревнованиях различного уровня - от первенства города до региональных чемпионатов, часть которых проходит в Екатеринбурге на городском пруду. Быков Архип занял 3е место на всероссийских соревнованиях 2015 года среди юношей 13-14-ти лет в Воронеже. А Ксения Безродных и Михаил Коптелов завоевали победу на первенстве России в «Драконах».
+Водные виды спорта не утратят своей актуальности еще долгие годы, а некоторые из них только набирают свою популярность. Теперь и Вы, наши уважаемые читатели, знаете чуть больше о возможности обрести новое хобби или же своё призвание на просторах озера Шарташ. 
+Если Вы заинтересовались поступлением в ДЮСШ – поспешите, набор начнётся в ближайшее время. 
+
+
+Текст: 
+Минеева Анастасия
+');
+INSERT INTO opinions (id, pub_date, title, headline, image, text) VALUES (2, '2016-10-20 04:59:30', 'Большое начинается с малого. История микрорайона ЖБИ', 'А началось все, ясное дело, с создания в начале 60-х годов завода железобетонных изделий...', NULL, '«Приятно отметить, что с ростом городов чувства и понятия потеряли столь отталкивающую в прошлом четкость, легко и непринужденно перетекают из одного в другое, как разные цвета спектра образуют наш теперешний белый свет.» 
+М. Жванецкий
+Мне почти 60 лет, я слегка чудаковат, немного неряшлив, местами консервативен, но временами готов к новым открытиям. В общем приятный и в меру интересный. Скорее всего так описал бы себя микрорайон ЖБИ будь он человеком. 
+Хотя нет, будет некорректно заявить, что ЖБИ – это человек, это скорее два брата, чьим отцом является одноименный завод. Первый – строгий и низкорослый приверженец Хрущевской эпохи, подойти без проблем к которому почти невозможно. Второй же, наоборот, высокий, свободолюбивый и общительный представитель молодого поколения Брежневского периода начала 80-х. На этом, собственно, можно было бы закончить историю о горячо любимом многими района, но нет, на самом деле все не так просто, как хотелось бы.
+А началось все, ясное дело, с создания в начале 60-х годов завода железобетонных изделий. Возникла острая необходимость заселить рабочих как можно ближе к заводу и в минимальные сроки была воздвигнута первая половина сегодняшнего микрорайона ЖБИ. Представляла она из себя типичную, для того времени, застройку из пятиэтажных «хрущевок». В таком виде район просуществовал порядка 20-ти лет. 
+Следующим и наиболее знаковым для нынешнего облика «жебайки» стало создание в начале 80-х годов, так называемого, МЖК-1 (Молодежного жилого комплекса), как можно догадаться из названия, подобного рода проект был одним из первых для всего СССР и, следовательно, без проблем попал под категорию самых известных. Основная цель создания молодежного жилого комплекса, согласно словам председателя оргкомитета строительства Свердловского МЖК Евгения Королева, звучала следующим образом: «Человек строит дом – дом строит человека». В это трудно поверить, но тогдашний Свердловск стал примером для всего союза и создание жилых комплексов подобного типа приобрело стихийный характер по всей стране. В то время все понимали, что для получения квартиры в МЖК мало просто работать – нужно по-настоящему пахать. И правда, юные комсомольцы, не щадя себя, в кротчайшие сроки возвели вторую часть района (не зря классическое название микрорайона ЖБИ – Комсомольский), не забывая при этом бить рекорды. К примеру, именно на территории Комсомольского стоит, некогда, самый многоквартирный и длинный дом в Свердловске – истинный памятник гигантизма советского социализма. 
+Сегодняшний облик микрорайона Комсомольский гармонично вписывает в себя архитектуру и настроения, как послевоенного СССР, так и современной России. Если так можно выразиться то, ЖБИ – это миниатюрный городок сочетающихся контрастов. Его нынешнему поколению необходимо не утратить текущий облик района, а если что-то и менять, то к лучшему. Лучшему, которое не станет поглощать наследие старого. И если читающий данную статью не знает, чем ему гордиться, то может стоит начать с истории собственного района? 
+Текст: 
+Лихачев Никита
+');
+INSERT INTO opinions (id, pub_date, title, headline, image, text) VALUES (3, '2016-10-20 05:03:14', 'Шарташ – многовековое наследие', 'Зеленый островок со своей фауной и флорой в окружении городских джунглей манит ароматом...', NULL, 'Как много мест в Екатеринбурге, в которые хочется возвращаться вновь? Места, которые хранят ваши воспоминания … Лично для меня, как для жительницы Кировского района, этим местом стал Шарташский лесопарк. 
+Зеленый островок со своей фауной и флорой в окружении городских джунглей манит ароматом лесных деревьев, трав и романтикой прогулки, почти на входе заметны каменные палатки – пристанище первобытного человека, хранящее в себе многовековую историю, а в самом сердце теплится удивительно живописное озеро, отличное место для активного отдыха людей любого возраста. А как бы вы описали этот парк для приезжего гостя? Чтобы проникнуться атмосферой, оценить масштабы действа, предлагаю ненадолго погрузиться в историю. 
+Само озеро Шарташ образовалось около 1 миллиона лет назад. Не все знают, что на самом деле у нас есть целых два озера с практически одноименным названием (Большой Шарташ и Малый Шарташ).
+Большой Шарташ имеет форму, напоминающую фасолевую бобину (оно вытянуто с севера на юг на 4 км, с запада на восток – на 2-2,5 км и имеет площадь зеркала 7,0 кв.км)С течением времени на берегах переменилась флора и фауна, гигантские папоротники сменялись хвойными и цветковыми растениями, а ящеры разных видов уступили место, на лесистых берегах озера, медведям, лосям, волкам. Согласно одной из точек зрения, менялась не только растительность и животный мир. Культура людей, живших здесь в разные исторические периоды, находит свое отражение в местности, окружающей озеро. Вполне вероятно, что некогда здесь формировался центр древней цивилизации, следы и указания на которую обязательно явятся пытливому взору исследователей таинственного.
+Долгое время на северных берегах озера Большой Шарташ стояло лишь одно старообрядческое село Шарташ. В начале XX века на южном берегу зародилось небольшое поселение Пески, а в 30-х годах, на некотором расстоянии от восточного берега, вальяжно разлегся с говорящим названием поселок Изоплит – с фабрикой для изготовления торфяных изоляционных плит (в настоящее время выработки торфа нет, на месте фабрики находится цветоводческое хозяйство «Цветы Урала»). С юго-восточной стороны озера в 1980-х гг., на месте Шарташского болота, был построен микрорайон Комсомольский.
+В наши дни Шарташ является бессточным водоемом. При этом в озере бьёт около 50 маленьких ключей, преимущественно с ледяной водой, что придает ему живительных сил. 
+Малый Шарташ - это небольшое труднодоступное озерко, расположенное к юго-востоку от Большого Шарташа среди заболоченной низины Малошарташского болота. Когда-то здесь был выкопан канал, соединяющий Малый Шарташ с Большим, но сейчас он практически занесен отложениями и зарос.
+По форме озерцо напоминает скорее пшеничное зерно, да и размеры его заметно меньше. Ширина водоема – 400 м, средняя глубина - 1,2 м, наибольшая – 1,8 м, площадь зеркала – 3,4 га. Это озеро находится на 9 м ниже уровня Большого Шарташа. Из озера выбегают ручейки, питающие реку Исток - левый приток Исети. Западный берег окаймлен гранитными останцами – «палатками» наподобие больших Шарташских каменных палаток. 
+В эпоху новокаменного века и «железа» окрестности Малого Шарташа были также заселены древним человеком, как и берега Большого Шарташа, о чем свидетельствуют следы поселений на его северо-западном берегу.На сегодняшний день любоваться красотами этого озера могут только знающие люди, подъезд на машинах невозможен. Находится оно на северо-восточной окраине г. Свердловска и относится к бассейну р.Исети.
+Родина русского золота
+В 1745 году в районе реки Березовки, приток Пышмы, известный горщик, житель села Шарташ Ерофей Марков открыл первое в России коренное золото. С 1748 года (год основания пос. Березовского) месторождение непрерывно разрабатывается и по мере углубления шахт «борется» с подземными водами. Сегодня город Берёзовский по праву считается «родиной русского золота», а Шарташ является отправной точкой, откуда и началась новая история России, связанная с широкомасштабной добычей, как золотой руды, так и россыпного золота.
+Каменные палатки
+Каждый посетитель Шарташского лесопарка хотя бы раз замечал пласты камней, смирно лежащие друг на друге. А том, кто, когда и для чего соорудил подобное, споры продолжаются до сих пор. Доподлинно неизвестно о том, является ли это результатом работы самой природы или же результат кропотливого труда  древней цивилизации. По одной из мистических версий «строителями» были великаны, свободно обживающие это место веками ранее. Предполагают, что эти сооружения – мегалиты (доисторические памятники, предположительно культового характера, представляющие собой постройки из огромных необработанных или полуобработанных каменных глыб) вроде Стоунженджа в Англии. Следы около десятка первобытных поселений показывают, что использовались они для жертвоприношений (о чем свидетельствует углубление в скале), также были найдены орудия труда и другие предметы быта того времени. 
+История хороша в меру, стоит сказать и о настоящем. На сегодня Шарташский лесопарк или по-другому парк «Каменные палатки» занимает одно из ведущих мест для времяпрепровождения не только жителей района Кировский, но и всего города. Проложенные асфальтовые дорожки давно уже полюбили велосипедисты и роллеры; детские площадки и пляжи активно используются посетителями парка, а белки и утки – стали почти домашними. Досуг становится разнообразнее и к спросу находятся всегда варианты предложения. Парк идет в ногу со временем и предоставляет нам возможность и площадку для развития.
+Что же остается нам? Ценить то, что имеем, знать историю и привносить свою лепту – это то, что в наших силах и под нашей ответственностью. Я полагаю, что мы с этим справимся.
+Источники: «Искусство. Современная иллюстрированная энциклопедия.» под ред. проф. Горкина А.П.; М.: Росмэн; 2007; «Березовское золоторудное месторождение (история и минералогия)» научное издание. Автор: Д.А. Клейменов, В.Г. Альбрехт, Ю.В. Ерохин, А.С. Баталии, А.А. Баталина; «Озера Урала» автор: Галактионов С.А. Свердловск, 1990.
+	Текст: Глотова Дина 
+');
+
+
+--
+-- TOC entry 2360 (class 0 OID 25290)
+-- Dependencies: 213
+-- Data for Name: opinions_images; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO opinions_images (id, opinion_id, photo_id) VALUES (1, 1, 8);
+INSERT INTO opinions_images (id, opinion_id, photo_id) VALUES (2, 1, 9);
+INSERT INTO opinions_images (id, opinion_id, photo_id) VALUES (3, 1, 10);
+INSERT INTO opinions_images (id, opinion_id, photo_id) VALUES (4, 1, 11);
+INSERT INTO opinions_images (id, opinion_id, photo_id) VALUES (5, 1, 12);
+INSERT INTO opinions_images (id, opinion_id, photo_id) VALUES (6, 2, 13);
+INSERT INTO opinions_images (id, opinion_id, photo_id) VALUES (7, 2, 14);
+INSERT INTO opinions_images (id, opinion_id, photo_id) VALUES (8, 2, 15);
+INSERT INTO opinions_images (id, opinion_id, photo_id) VALUES (9, 3, 16);
+INSERT INTO opinions_images (id, opinion_id, photo_id) VALUES (10, 3, 17);
+INSERT INTO opinions_images (id, opinion_id, photo_id) VALUES (11, 3, 18);
+INSERT INTO opinions_images (id, opinion_id, photo_id) VALUES (12, 3, 19);
+INSERT INTO opinions_images (id, opinion_id, photo_id) VALUES (13, 3, 20);
+INSERT INTO opinions_images (id, opinion_id, photo_id) VALUES (14, 3, 21);
+
+
+--
+-- TOC entry 2361 (class 0 OID 25305)
+-- Dependencies: 214
+-- Data for Name: opinions_locations; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO opinions_locations (id, opinion_id, coord) VALUES (1, 1, '56.862457, 60.707797');
+INSERT INTO opinions_locations (id, opinion_id, coord) VALUES (2, 3, '56.862457, 60.707797');
+
+
+--
+-- TOC entry 2359 (class 0 OID 25275)
+-- Dependencies: 212
+-- Data for Name: opinionstotags; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO opinionstotags (id, opinions_id, tags_id) VALUES (1, 1, 3);
+INSERT INTO opinionstotags (id, opinions_id, tags_id) VALUES (2, 2, 2);
+INSERT INTO opinionstotags (id, opinions_id, tags_id) VALUES (3, 2, 4);
+INSERT INTO opinionstotags (id, opinions_id, tags_id) VALUES (4, 3, 1);
+INSERT INTO opinionstotags (id, opinions_id, tags_id) VALUES (5, 3, 4);
+
+
+--
+-- TOC entry 2362 (class 0 OID 25313)
+-- Dependencies: 215
+-- Data for Name: photoalbums_title; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO photoalbums_title (id, name, description, title_image) VALUES (1, 'Жизнь радистов', 'Вроде норм', 6);
+INSERT INTO photoalbums_title (id, name, description, title_image) VALUES (2, 'Еще один альбом', 'Еще одно описание альбома', 1);
+
+
+--
+-- TOC entry 2363 (class 0 OID 25326)
+-- Dependencies: 216
+-- Data for Name: photos_in_albums; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO photos_in_albums (id, album_id, photo_id) VALUES (1, 1, 6);
+INSERT INTO photos_in_albums (id, album_id, photo_id) VALUES (2, 1, 5);
+INSERT INTO photos_in_albums (id, album_id, photo_id) VALUES (3, 1, 6);
+INSERT INTO photos_in_albums (id, album_id, photo_id) VALUES (4, 1, 7);
+INSERT INTO photos_in_albums (id, album_id, photo_id) VALUES (5, 2, 1);
+INSERT INTO photos_in_albums (id, album_id, photo_id) VALUES (6, 2, 3);
+INSERT INTO photos_in_albums (id, album_id, photo_id) VALUES (7, 2, 4);
+
+
+--
+-- TOC entry 2353 (class 0 OID 25203)
+-- Dependencies: 206
+-- Data for Name: photos_urls; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO photos_urls (id, path) VALUES (1, 'http://www.zastavki.com/pictures/1600x1200/2014/World___New_Zealand_Starry_night_in_New_Zealand_060739_2.jpg');
+INSERT INTO photos_urls (id, path) VALUES (2, 'http://hdwallpaperspal.com/wp-content/uploads/2015/10/Snow-Tiger-HD-Wallpaper.png');
+INSERT INTO photos_urls (id, path) VALUES (3, 'http://nevseoboi.com.ua/uploads/posts/2011-06/1309255179_61_www.nevseoboi.com.ua.jpg');
+INSERT INTO photos_urls (id, path) VALUES (4, 'http://www.hdwallwide.com/wp-content/uploads/2014/02/red-forest-4-wallpaper-1080p-HD.jpg');
+INSERT INTO photos_urls (id, path) VALUES (5, 'http://photos.wikimapia.org/p/00/01/56/40/93_big.jpg');
+INSERT INTO photos_urls (id, path) VALUES (6, 'https://upload.wikimedia.org/wikipedia/commons/d/d9/%D0%92%D1%85%D0%BE%D0%B4_%D0%B2_%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5_%D0%98%D0%A0%D0%98%D0%A2-%D0%A0%D0%A2%D0%A4_%D0%A3%D1%80%D0%A4%D0%A3_-_1.JPG');
+INSERT INTO photos_urls (id, path) VALUES (7, 'http://www.mm-football.ru/images/3_upi_stadium.jpg');
+INSERT INTO photos_urls (id, path) VALUES (8, 'http://funkyimg.com/i/2ir4K.jpg');
+INSERT INTO photos_urls (id, path) VALUES (9, 'http://funkyimg.com/i/2ir4L.jpg');
+INSERT INTO photos_urls (id, path) VALUES (10, 'http://funkyimg.com/i/2ir4M.jpg');
+INSERT INTO photos_urls (id, path) VALUES (11, 'http://funkyimg.com/i/2ir4N.jpg');
+INSERT INTO photos_urls (id, path) VALUES (12, 'http://funkyimg.com/i/2ir4P.jpg');
+INSERT INTO photos_urls (id, path) VALUES (13, 'http://funkyimg.com/i/2ir5Y.jpg');
+INSERT INTO photos_urls (id, path) VALUES (14, 'http://funkyimg.com/i/2ir5Z.jpeg');
+INSERT INTO photos_urls (id, path) VALUES (15, 'http://funkyimg.com/i/2ir61.jpeg');
+INSERT INTO photos_urls (id, path) VALUES (16, 'http://funkyimg.com/i/2ir62.jpg');
+INSERT INTO photos_urls (id, path) VALUES (17, 'http://funkyimg.com/i/2ir63.jpg');
+INSERT INTO photos_urls (id, path) VALUES (18, 'http://funkyimg.com/i/2ir64.jpg');
+INSERT INTO photos_urls (id, path) VALUES (19, 'http://funkyimg.com/i/2ir65.jpg');
+INSERT INTO photos_urls (id, path) VALUES (20, 'http://funkyimg.com/i/2ir66.jpg');
+INSERT INTO photos_urls (id, path) VALUES (21, 'http://funkyimg.com/i/2ir67.jpg');
+INSERT INTO photos_urls (id, path) VALUES (0, '');
+
+
+--
+-- TOC entry 2337 (class 0 OID 16602)
+-- Dependencies: 190
+-- Data for Name: standartRouteHandler_cityarea; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2338 (class 0 OID 16607)
+-- Dependencies: 191
+-- Data for Name: standartRouteHandler_coord; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2339 (class 0 OID 16612)
+-- Dependencies: 192
+-- Data for Name: standartRouteHandler_coordlist; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2340 (class 0 OID 16617)
+-- Dependencies: 193
+-- Data for Name: standartRouteHandler_event; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2341 (class 0 OID 16625)
+-- Dependencies: 194
+-- Data for Name: standartRouteHandler_eventreview; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2342 (class 0 OID 16630)
+-- Dependencies: 195
+-- Data for Name: standartRouteHandler_likes; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2343 (class 0 OID 16638)
+-- Dependencies: 196
+-- Data for Name: standartRouteHandler_news; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2344 (class 0 OID 16646)
+-- Dependencies: 197
+-- Data for Name: standartRouteHandler_photoalbum; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2345 (class 0 OID 16654)
+-- Dependencies: 198
+-- Data for Name: standartRouteHandler_review; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2346 (class 0 OID 16662)
+-- Dependencies: 199
+-- Data for Name: standartRouteHandler_sightplace; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2347 (class 0 OID 16670)
+-- Dependencies: 200
+-- Data for Name: standartRouteHandler_sightreview; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2348 (class 0 OID 16675)
+-- Dependencies: 201
+-- Data for Name: standartRouteHandler_travelsways; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2349 (class 0 OID 16680)
+-- Dependencies: 202
+-- Data for Name: standartRouteHandler_worldarea; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2358 (class 0 OID 25267)
+-- Dependencies: 211
+-- Data for Name: tags; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO tags (id, name) VALUES (1, 'отдых');
+INSERT INTO tags (id, name) VALUES (2, 'история');
+INSERT INTO tags (id, name) VALUES (3, 'спорт');
+INSERT INTO tags (id, name) VALUES (4, 'город');
+
+
+--
+-- TOC entry 2365 (class 0 OID 25349)
+-- Dependencies: 218
+-- Data for Name: tour_point; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO tour_point (id, name, coordinates, description, image_id) VALUES (1, 'Точка 1', '56.830364, 60.705883', 'Точка 1', NULL);
+INSERT INTO tour_point (id, name, coordinates, description, image_id) VALUES (2, 'Точка 2', '56.828277, 60.708158', 'Точка 2', NULL);
+INSERT INTO tour_point (id, name, coordinates, description, image_id) VALUES (3, 'Точка 3', '56.826202, 60.713136', 'Точка 3', NULL);
+INSERT INTO tour_point (id, name, coordinates, description, image_id) VALUES (4, 'Точка 4', '56.826968, 60.720045', NULL, NULL);
+INSERT INTO tour_point (id, name, coordinates, description, image_id) VALUES (5, 'Точка 5', '56.828436, 60.725109', NULL, NULL);
+INSERT INTO tour_point (id, name, coordinates, description, image_id) VALUES (6, 'Точка 6', '56.855954, 60.680699', NULL, NULL);
+INSERT INTO tour_point (id, name, coordinates, description, image_id) VALUES (7, 'Точка 7', '56.859318, 60.685266', 'Описание', NULL);
+INSERT INTO tour_point (id, name, coordinates, description, image_id) VALUES (8, 'Точка 8', '56.862511, 60.688915', NULL, NULL);
+INSERT INTO tour_point (id, name, coordinates, description, image_id) VALUES (9, 'Точка 9', '56.865217, 60.691638', NULL, NULL);
+INSERT INTO tour_point (id, name, coordinates, description, image_id) VALUES (10, 'ГУК', '56.844040, 60.653668', 'Главный учебный корпус УрФУ', 5);
+INSERT INTO tour_point (id, name, coordinates, description, image_id) VALUES (11, 'ИРИТ-РтФ', '56.840781, 60.650757', 'Все радисты с детства знают тройку самых важных слов: РтФ, УрФУ, Попов!', 6);
+INSERT INTO tour_point (id, name, coordinates, description, image_id) VALUES (12, 'Стадион', '56.838375, 60.654371', 'Стадион УрФУ', 7);
+
+
+--
+-- TOC entry 2364 (class 0 OID 25341)
+-- Dependencies: 217
+-- Data for Name: tours; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO tours (id, name, description) VALUES (1, 'Прогулка по Шарташу', 'Ознакомьтесь с удивительными миром Шарташа!');
+INSERT INTO tours (id, name, description) VALUES (2, 'Прогулка по Шарташу 2', NULL);
+INSERT INTO tours (id, name, description) VALUES (3, 'УрФУ', 'Какие-то здания');
+
+
+--
+-- TOC entry 2366 (class 0 OID 25362)
+-- Dependencies: 219
+-- Data for Name: tours_to_points; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO tours_to_points (id, tours_id, point_id) VALUES (1, 1, 1);
+INSERT INTO tours_to_points (id, tours_id, point_id) VALUES (2, 1, 2);
+INSERT INTO tours_to_points (id, tours_id, point_id) VALUES (3, 1, 3);
+INSERT INTO tours_to_points (id, tours_id, point_id) VALUES (4, 1, 4);
+INSERT INTO tours_to_points (id, tours_id, point_id) VALUES (5, 1, 5);
+INSERT INTO tours_to_points (id, tours_id, point_id) VALUES (6, 2, 6);
+INSERT INTO tours_to_points (id, tours_id, point_id) VALUES (7, 2, 7);
+INSERT INTO tours_to_points (id, tours_id, point_id) VALUES (8, 2, 8);
+INSERT INTO tours_to_points (id, tours_id, point_id) VALUES (9, 2, 9);
+INSERT INTO tours_to_points (id, tours_id, point_id) VALUES (10, 3, 10);
+INSERT INTO tours_to_points (id, tours_id, point_id) VALUES (11, 3, 11);
+INSERT INTO tours_to_points (id, tours_id, point_id) VALUES (12, 3, 12);
+
+
+--
+-- TOC entry 2367 (class 0 OID 25377)
+-- Dependencies: 220
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2336 (class 0 OID 16597)
+-- Dependencies: 189
+-- Data for Name: worldarea; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2133 (class 2606 OID 25192)
+-- Name: attractions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY attractions
+    ADD CONSTRAINT attractions_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2052 (class 2606 OID 16434)
+-- Name: auth_group_name_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_group
+    ADD CONSTRAINT auth_group_name_key UNIQUE (name);
+
+
+--
+-- TOC entry 2058 (class 2606 OID 16489)
+-- Name: auth_group_permissions_group_id_0cd325b0_uniq; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_group_permissions
+    ADD CONSTRAINT auth_group_permissions_group_id_0cd325b0_uniq UNIQUE (group_id, permission_id);
+
+
+--
+-- TOC entry 2060 (class 2606 OID 16442)
+-- Name: auth_group_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_group_permissions
+    ADD CONSTRAINT auth_group_permissions_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2054 (class 2606 OID 16432)
+-- Name: auth_group_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_group
+    ADD CONSTRAINT auth_group_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2047 (class 2606 OID 16475)
+-- Name: auth_permission_content_type_id_01ab375a_uniq; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_permission
+    ADD CONSTRAINT auth_permission_content_type_id_01ab375a_uniq UNIQUE (content_type_id, codename);
+
+
+--
+-- TOC entry 2049 (class 2606 OID 16424)
+-- Name: auth_permission_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_permission
+    ADD CONSTRAINT auth_permission_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2069 (class 2606 OID 16460)
+-- Name: auth_user_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_user_groups
+    ADD CONSTRAINT auth_user_groups_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2071 (class 2606 OID 16504)
+-- Name: auth_user_groups_user_id_94350c0c_uniq; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_user_groups
+    ADD CONSTRAINT auth_user_groups_user_id_94350c0c_uniq UNIQUE (user_id, group_id);
+
+
+--
+-- TOC entry 2062 (class 2606 OID 16450)
+-- Name: auth_user_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_user
+    ADD CONSTRAINT auth_user_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2075 (class 2606 OID 16468)
+-- Name: auth_user_user_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_user_user_permissions
+    ADD CONSTRAINT auth_user_user_permissions_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2077 (class 2606 OID 16518)
+-- Name: auth_user_user_permissions_user_id_14a6b632_uniq; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_user_user_permissions
+    ADD CONSTRAINT auth_user_user_permissions_user_id_14a6b632_uniq UNIQUE (user_id, permission_id);
+
+
+--
+-- TOC entry 2065 (class 2606 OID 16546)
+-- Name: auth_user_username_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_user
+    ADD CONSTRAINT auth_user_username_key UNIQUE (username);
+
+
+--
+-- TOC entry 2137 (class 2606 OID 25202)
+-- Name: categories_links_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY categories_links
+    ADD CONSTRAINT categories_links_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2135 (class 2606 OID 25197)
+-- Name: categories_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY categories
+    ADD CONSTRAINT categories_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2081 (class 2606 OID 16532)
+-- Name: django_admin_log_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY django_admin_log
+    ADD CONSTRAINT django_admin_log_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2042 (class 2606 OID 16416)
+-- Name: django_content_type_app_label_76bd3d3b_uniq; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY django_content_type
+    ADD CONSTRAINT django_content_type_app_label_76bd3d3b_uniq UNIQUE (app_label, model);
+
+
+--
+-- TOC entry 2044 (class 2606 OID 16414)
+-- Name: django_content_type_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY django_content_type
+    ADD CONSTRAINT django_content_type_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2040 (class 2606 OID 16406)
+-- Name: django_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY django_migrations
+    ADD CONSTRAINT django_migrations_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2084 (class 2606 OID 16558)
+-- Name: django_session_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY django_session
+    ADD CONSTRAINT django_session_pkey PRIMARY KEY (session_key);
+
+
+--
+-- TOC entry 2143 (class 2606 OID 25237)
+-- Name: location_news_event_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY location_news_event
+    ADD CONSTRAINT location_news_event_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2145 (class 2606 OID 25247)
+-- Name: news_photos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY news_photos
+    ADD CONSTRAINT news_photos_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2141 (class 2606 OID 25219)
+-- Name: news_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY news
+    ADD CONSTRAINT news_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2153 (class 2606 OID 25294)
+-- Name: opinions_images_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY opinions_images
+    ADD CONSTRAINT opinions_images_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2155 (class 2606 OID 25312)
+-- Name: opinions_locations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY opinions_locations
+    ADD CONSTRAINT opinions_locations_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2147 (class 2606 OID 25266)
+-- Name: opinions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY opinions
+    ADD CONSTRAINT opinions_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2151 (class 2606 OID 25279)
+-- Name: opinionstotags_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY opinionstotags
+    ADD CONSTRAINT opinionstotags_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2157 (class 2606 OID 25320)
+-- Name: photoalbums_title_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY photoalbums_title
+    ADD CONSTRAINT photoalbums_title_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2159 (class 2606 OID 25330)
+-- Name: photos_in_albums_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY photos_in_albums
+    ADD CONSTRAINT photos_in_albums_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2139 (class 2606 OID 25207)
+-- Name: photos_urls_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY photos_urls
+    ADD CONSTRAINT photos_urls_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2090 (class 2606 OID 16606)
+-- Name: standartRouteHandler_cityarea_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY "standartRouteHandler_cityarea"
+    ADD CONSTRAINT "standartRouteHandler_cityarea_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2092 (class 2606 OID 16611)
+-- Name: standartRouteHandler_coord_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY "standartRouteHandler_coord"
+    ADD CONSTRAINT "standartRouteHandler_coord_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2096 (class 2606 OID 16616)
+-- Name: standartRouteHandler_coordlist_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY "standartRouteHandler_coordlist"
+    ADD CONSTRAINT "standartRouteHandler_coordlist_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2101 (class 2606 OID 16624)
+-- Name: standartRouteHandler_event_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY "standartRouteHandler_event"
+    ADD CONSTRAINT "standartRouteHandler_event_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2105 (class 2606 OID 16629)
+-- Name: standartRouteHandler_eventreview_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY "standartRouteHandler_eventreview"
+    ADD CONSTRAINT "standartRouteHandler_eventreview_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2108 (class 2606 OID 16637)
+-- Name: standartRouteHandler_likes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY "standartRouteHandler_likes"
+    ADD CONSTRAINT "standartRouteHandler_likes_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2113 (class 2606 OID 16645)
+-- Name: standartRouteHandler_news_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY "standartRouteHandler_news"
+    ADD CONSTRAINT "standartRouteHandler_news_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2115 (class 2606 OID 16653)
+-- Name: standartRouteHandler_photoalbum_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY "standartRouteHandler_photoalbum"
+    ADD CONSTRAINT "standartRouteHandler_photoalbum_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2118 (class 2606 OID 16661)
+-- Name: standartRouteHandler_review_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY "standartRouteHandler_review"
+    ADD CONSTRAINT "standartRouteHandler_review_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2122 (class 2606 OID 16669)
+-- Name: standartRouteHandler_sightplace_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY "standartRouteHandler_sightplace"
+    ADD CONSTRAINT "standartRouteHandler_sightplace_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2126 (class 2606 OID 16674)
+-- Name: standartRouteHandler_sightreview_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY "standartRouteHandler_sightreview"
+    ADD CONSTRAINT "standartRouteHandler_sightreview_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2129 (class 2606 OID 16679)
+-- Name: standartRouteHandler_travelsways_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY "standartRouteHandler_travelsways"
+    ADD CONSTRAINT "standartRouteHandler_travelsways_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2131 (class 2606 OID 16684)
+-- Name: standartRouteHandler_worldarea_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY "standartRouteHandler_worldarea"
+    ADD CONSTRAINT "standartRouteHandler_worldarea_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2149 (class 2606 OID 25274)
+-- Name: tags_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY tags
+    ADD CONSTRAINT tags_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2163 (class 2606 OID 25356)
+-- Name: tour_point_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY tour_point
+    ADD CONSTRAINT tour_point_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2161 (class 2606 OID 25348)
+-- Name: tours_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY tours
+    ADD CONSTRAINT tours_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2165 (class 2606 OID 25366)
+-- Name: tours_to_points_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY tours_to_points
+    ADD CONSTRAINT tours_to_points_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2167 (class 2606 OID 25384)
+-- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2087 (class 2606 OID 16601)
+-- Name: worldarea_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY worldarea
+    ADD CONSTRAINT worldarea_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2050 (class 1259 OID 16477)
+-- Name: auth_group_name_a6ea08ec_like; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX auth_group_name_a6ea08ec_like ON auth_group USING btree (name varchar_pattern_ops);
+
+
+--
+-- TOC entry 2055 (class 1259 OID 16490)
+-- Name: auth_group_permissions_0e939a4f; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX auth_group_permissions_0e939a4f ON auth_group_permissions USING btree (group_id);
+
+
+--
+-- TOC entry 2056 (class 1259 OID 16491)
+-- Name: auth_group_permissions_8373b171; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX auth_group_permissions_8373b171 ON auth_group_permissions USING btree (permission_id);
+
+
+--
+-- TOC entry 2045 (class 1259 OID 16476)
+-- Name: auth_permission_417f1b1c; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX auth_permission_417f1b1c ON auth_permission USING btree (content_type_id);
+
+
+--
+-- TOC entry 2066 (class 1259 OID 16506)
+-- Name: auth_user_groups_0e939a4f; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX auth_user_groups_0e939a4f ON auth_user_groups USING btree (group_id);
+
+
+--
+-- TOC entry 2067 (class 1259 OID 16505)
+-- Name: auth_user_groups_e8701ad4; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX auth_user_groups_e8701ad4 ON auth_user_groups USING btree (user_id);
+
+
+--
+-- TOC entry 2072 (class 1259 OID 16520)
+-- Name: auth_user_user_permissions_8373b171; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX auth_user_user_permissions_8373b171 ON auth_user_user_permissions USING btree (permission_id);
+
+
+--
+-- TOC entry 2073 (class 1259 OID 16519)
+-- Name: auth_user_user_permissions_e8701ad4; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX auth_user_user_permissions_e8701ad4 ON auth_user_user_permissions USING btree (user_id);
+
+
+--
+-- TOC entry 2063 (class 1259 OID 16547)
+-- Name: auth_user_username_6821ab7c_like; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX auth_user_username_6821ab7c_like ON auth_user USING btree (username varchar_pattern_ops);
+
+
+--
+-- TOC entry 2078 (class 1259 OID 16543)
+-- Name: django_admin_log_417f1b1c; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX django_admin_log_417f1b1c ON django_admin_log USING btree (content_type_id);
+
+
+--
+-- TOC entry 2079 (class 1259 OID 16544)
+-- Name: django_admin_log_e8701ad4; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX django_admin_log_e8701ad4 ON django_admin_log USING btree (user_id);
+
+
+--
+-- TOC entry 2082 (class 1259 OID 16559)
+-- Name: django_session_de54fa62; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX django_session_de54fa62 ON django_session USING btree (expire_date);
+
+
+--
+-- TOC entry 2085 (class 1259 OID 16560)
+-- Name: django_session_session_key_c0390e0f_like; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX django_session_session_key_c0390e0f_like ON django_session USING btree (session_key varchar_pattern_ops);
+
+
+--
+-- TOC entry 2088 (class 1259 OID 16787)
+-- Name: standartRouteHandler_cityarea_8a2b146c; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX "standartRouteHandler_cityarea_8a2b146c" ON "standartRouteHandler_cityarea" USING btree (world_area_id);
+
+
+--
+-- TOC entry 2093 (class 1259 OID 16690)
+-- Name: standartRouteHandler_coordlist_2c41b559; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX "standartRouteHandler_coordlist_2c41b559" ON "standartRouteHandler_coordlist" USING btree (coord_id);
+
+
+--
+-- TOC entry 2094 (class 1259 OID 16781)
+-- Name: standartRouteHandler_coordlist_3dfe6aea; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX "standartRouteHandler_coordlist_3dfe6aea" ON "standartRouteHandler_coordlist" USING btree ("sightPlace_id");
+
+
+--
+-- TOC entry 2097 (class 1259 OID 16769)
+-- Name: standartRouteHandler_event_0039c679; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX "standartRouteHandler_event_0039c679" ON "standartRouteHandler_event" USING btree (photos_id);
+
+
+--
+-- TOC entry 2098 (class 1259 OID 16696)
+-- Name: standartRouteHandler_event_2c41b559; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX "standartRouteHandler_event_2c41b559" ON "standartRouteHandler_event" USING btree (coord_id);
+
+
+--
+-- TOC entry 2099 (class 1259 OID 16775)
+-- Name: standartRouteHandler_event_38202c0d; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX "standartRouteHandler_event_38202c0d" ON "standartRouteHandler_event" USING btree (sight_place_id);
+
+
+--
+-- TOC entry 2102 (class 1259 OID 16702)
+-- Name: standartRouteHandler_eventreview_4437cfac; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX "standartRouteHandler_eventreview_4437cfac" ON "standartRouteHandler_eventreview" USING btree (event_id);
+
+
+--
+-- TOC entry 2103 (class 1259 OID 16763)
+-- Name: standartRouteHandler_eventreview_5bd2a989; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX "standartRouteHandler_eventreview_5bd2a989" ON "standartRouteHandler_eventreview" USING btree (review_id);
+
+
+--
+-- TOC entry 2106 (class 1259 OID 16757)
+-- Name: standartRouteHandler_likes_38202c0d; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX "standartRouteHandler_likes_38202c0d" ON "standartRouteHandler_likes" USING btree (sight_place_id);
+
+
+--
+-- TOC entry 2109 (class 1259 OID 16745)
+-- Name: standartRouteHandler_news_0039c679; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX "standartRouteHandler_news_0039c679" ON "standartRouteHandler_news" USING btree (photos_id);
+
+
+--
+-- TOC entry 2110 (class 1259 OID 16708)
+-- Name: standartRouteHandler_news_2c41b559; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX "standartRouteHandler_news_2c41b559" ON "standartRouteHandler_news" USING btree (coord_id);
+
+
+--
+-- TOC entry 2111 (class 1259 OID 16751)
+-- Name: standartRouteHandler_news_38202c0d; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX "standartRouteHandler_news_38202c0d" ON "standartRouteHandler_news" USING btree (sight_place_id);
+
+
+--
+-- TOC entry 2116 (class 1259 OID 16714)
+-- Name: standartRouteHandler_review_0039c679; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX "standartRouteHandler_review_0039c679" ON "standartRouteHandler_review" USING btree (photos_id);
+
+
+--
+-- TOC entry 2119 (class 1259 OID 16726)
+-- Name: standartRouteHandler_sightplace_0039c679; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX "standartRouteHandler_sightplace_0039c679" ON "standartRouteHandler_sightplace" USING btree (photos_id);
+
+
+--
+-- TOC entry 2120 (class 1259 OID 16725)
+-- Name: standartRouteHandler_sightplace_59386486; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX "standartRouteHandler_sightplace_59386486" ON "standartRouteHandler_sightplace" USING btree ("cityArea_id");
+
+
+--
+-- TOC entry 2123 (class 1259 OID 16737)
+-- Name: standartRouteHandler_sightreview_5bd2a989; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX "standartRouteHandler_sightreview_5bd2a989" ON "standartRouteHandler_sightreview" USING btree (review_id);
+
+
+--
+-- TOC entry 2124 (class 1259 OID 16738)
+-- Name: standartRouteHandler_sightreview_9cbbe8a7; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX "standartRouteHandler_sightreview_9cbbe8a7" ON "standartRouteHandler_sightreview" USING btree (sight_id);
+
+
+--
+-- TOC entry 2127 (class 1259 OID 16744)
+-- Name: standartRouteHandler_travelsways_e7f423b8; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX "standartRouteHandler_travelsways_e7f423b8" ON "standartRouteHandler_travelsways" USING btree (ooord_id);
+
+
+--
+-- TOC entry 2170 (class 2606 OID 16483)
+-- Name: auth_group_permiss_permission_id_84c5c92e_fk_auth_permission_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_group_permissions
+    ADD CONSTRAINT auth_group_permiss_permission_id_84c5c92e_fk_auth_permission_id FOREIGN KEY (permission_id) REFERENCES auth_permission(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2169 (class 2606 OID 16478)
+-- Name: auth_group_permissions_group_id_b120cbf9_fk_auth_group_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_group_permissions
+    ADD CONSTRAINT auth_group_permissions_group_id_b120cbf9_fk_auth_group_id FOREIGN KEY (group_id) REFERENCES auth_group(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2168 (class 2606 OID 16469)
+-- Name: auth_permiss_content_type_id_2f476e4b_fk_django_content_type_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_permission
+    ADD CONSTRAINT auth_permiss_content_type_id_2f476e4b_fk_django_content_type_id FOREIGN KEY (content_type_id) REFERENCES django_content_type(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2172 (class 2606 OID 16498)
+-- Name: auth_user_groups_group_id_97559544_fk_auth_group_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_user_groups
+    ADD CONSTRAINT auth_user_groups_group_id_97559544_fk_auth_group_id FOREIGN KEY (group_id) REFERENCES auth_group(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2171 (class 2606 OID 16493)
+-- Name: auth_user_groups_user_id_6a12ed8b_fk_auth_user_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_user_groups
+    ADD CONSTRAINT auth_user_groups_user_id_6a12ed8b_fk_auth_user_id FOREIGN KEY (user_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2174 (class 2606 OID 16512)
+-- Name: auth_user_user_per_permission_id_1fbb5f2c_fk_auth_permission_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_user_user_permissions
+    ADD CONSTRAINT auth_user_user_per_permission_id_1fbb5f2c_fk_auth_permission_id FOREIGN KEY (permission_id) REFERENCES auth_permission(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2173 (class 2606 OID 16507)
+-- Name: auth_user_user_permissions_user_id_a95ead1b_fk_auth_user_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_user_user_permissions
+    ADD CONSTRAINT auth_user_user_permissions_user_id_a95ead1b_fk_auth_user_id FOREIGN KEY (user_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2175 (class 2606 OID 16533)
+-- Name: django_admin_content_type_id_c4bce8eb_fk_django_content_type_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY django_admin_log
+    ADD CONSTRAINT django_admin_content_type_id_c4bce8eb_fk_django_content_type_id FOREIGN KEY (content_type_id) REFERENCES django_content_type(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2176 (class 2606 OID 16538)
+-- Name: django_admin_log_user_id_c564eba6_fk_auth_user_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY django_admin_log
+    ADD CONSTRAINT django_admin_log_user_id_c564eba6_fk_auth_user_id FOREIGN KEY (user_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2197 (class 2606 OID 25238)
+-- Name: location_news_event_news_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY location_news_event
+    ADD CONSTRAINT location_news_event_news_id_fkey FOREIGN KEY (news_id) REFERENCES news(id);
+
+
+--
+-- TOC entry 2195 (class 2606 OID 25220)
+-- Name: news_id_categ_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY news
+    ADD CONSTRAINT news_id_categ_fkey FOREIGN KEY (id_categ) REFERENCES categories(id);
+
+
+--
+-- TOC entry 2196 (class 2606 OID 25225)
+-- Name: news_image_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY news
+    ADD CONSTRAINT news_image_id_fkey FOREIGN KEY (image_id) REFERENCES photos_urls(id);
+
+
+--
+-- TOC entry 2199 (class 2606 OID 25253)
+-- Name: news_photos_news_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY news_photos
+    ADD CONSTRAINT news_photos_news_id_fkey FOREIGN KEY (news_id) REFERENCES news(id);
+
+
+--
+-- TOC entry 2198 (class 2606 OID 25248)
+-- Name: news_photos_photo_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY news_photos
+    ADD CONSTRAINT news_photos_photo_id_fkey FOREIGN KEY (photo_id) REFERENCES photos_urls(id);
+
+
+--
+-- TOC entry 2202 (class 2606 OID 25295)
+-- Name: opinions_images_opinion_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY opinions_images
+    ADD CONSTRAINT opinions_images_opinion_id_fkey FOREIGN KEY (opinion_id) REFERENCES opinions(id);
+
+
+--
+-- TOC entry 2203 (class 2606 OID 25300)
+-- Name: opinions_images_photo_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY opinions_images
+    ADD CONSTRAINT opinions_images_photo_id_fkey FOREIGN KEY (photo_id) REFERENCES photos_urls(id);
+
+
+--
+-- TOC entry 2201 (class 2606 OID 25285)
+-- Name: opinionstotags_opinions_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY opinionstotags
+    ADD CONSTRAINT opinionstotags_opinions_id_fkey FOREIGN KEY (opinions_id) REFERENCES opinions(id);
+
+
+--
+-- TOC entry 2200 (class 2606 OID 25280)
+-- Name: opinionstotags_tags_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY opinionstotags
+    ADD CONSTRAINT opinionstotags_tags_id_fkey FOREIGN KEY (tags_id) REFERENCES tags(id);
+
+
+--
+-- TOC entry 2204 (class 2606 OID 25321)
+-- Name: photoalbums_title_title_image_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY photoalbums_title
+    ADD CONSTRAINT photoalbums_title_title_image_fkey FOREIGN KEY (title_image) REFERENCES photos_urls(id);
+
+
+--
+-- TOC entry 2206 (class 2606 OID 25336)
+-- Name: photos_in_albums_album_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY photos_in_albums
+    ADD CONSTRAINT photos_in_albums_album_id_fkey FOREIGN KEY (album_id) REFERENCES photoalbums_title(id);
+
+
+--
+-- TOC entry 2205 (class 2606 OID 25331)
+-- Name: photos_in_albums_photo_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY photos_in_albums
+    ADD CONSTRAINT photos_in_albums_photo_id_fkey FOREIGN KEY (photo_id) REFERENCES photos_urls(id);
+
+
+--
+-- TOC entry 2185 (class 2606 OID 16758)
+-- Name: s_sight_place_id_04af7171_fk_standartRouteHandler_sightplace_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "standartRouteHandler_likes"
+    ADD CONSTRAINT "s_sight_place_id_04af7171_fk_standartRouteHandler_sightplace_id" FOREIGN KEY (sight_place_id) REFERENCES "standartRouteHandler_sightplace"(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2188 (class 2606 OID 16752)
+-- Name: s_sight_place_id_33e9f4de_fk_standartRouteHandler_sightplace_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "standartRouteHandler_news"
+    ADD CONSTRAINT "s_sight_place_id_33e9f4de_fk_standartRouteHandler_sightplace_id" FOREIGN KEY (sight_place_id) REFERENCES "standartRouteHandler_sightplace"(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2182 (class 2606 OID 16776)
+-- Name: s_sight_place_id_e9577c78_fk_standartRouteHandler_sightplace_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "standartRouteHandler_event"
+    ADD CONSTRAINT "s_sight_place_id_e9577c78_fk_standartRouteHandler_sightplace_id" FOREIGN KEY (sight_place_id) REFERENCES "standartRouteHandler_sightplace"(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2179 (class 2606 OID 16782)
+-- Name: st_sightPlace_id_f0362aa8_fk_standartRouteHandler_sightplace_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "standartRouteHandler_coordlist"
+    ADD CONSTRAINT "st_sightPlace_id_f0362aa8_fk_standartRouteHandler_sightplace_id" FOREIGN KEY ("sightPlace_id") REFERENCES "standartRouteHandler_sightplace"(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2177 (class 2606 OID 16788)
+-- Name: sta_world_area_id_5912b40a_fk_standartRouteHandler_worldarea_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "standartRouteHandler_cityarea"
+    ADD CONSTRAINT "sta_world_area_id_5912b40a_fk_standartRouteHandler_worldarea_id" FOREIGN KEY (world_area_id) REFERENCES "standartRouteHandler_worldarea"(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2190 (class 2606 OID 16715)
+-- Name: standa_cityArea_id_7ab1bbcc_fk_standartRouteHandler_cityarea_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "standartRouteHandler_sightplace"
+    ADD CONSTRAINT "standa_cityArea_id_7ab1bbcc_fk_standartRouteHandler_cityarea_id" FOREIGN KEY ("cityArea_id") REFERENCES "standartRouteHandler_cityarea"(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2191 (class 2606 OID 16720)
+-- Name: standa_photos_id_5285290e_fk_standartRouteHandler_photoalbum_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "standartRouteHandler_sightplace"
+    ADD CONSTRAINT "standa_photos_id_5285290e_fk_standartRouteHandler_photoalbum_id" FOREIGN KEY (photos_id) REFERENCES "standartRouteHandler_photoalbum"(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2187 (class 2606 OID 16746)
+-- Name: standa_photos_id_a3d7bfe4_fk_standartRouteHandler_photoalbum_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "standartRouteHandler_news"
+    ADD CONSTRAINT "standa_photos_id_a3d7bfe4_fk_standartRouteHandler_photoalbum_id" FOREIGN KEY (photos_id) REFERENCES "standartRouteHandler_photoalbum"(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2189 (class 2606 OID 16709)
+-- Name: standa_photos_id_aefd7469_fk_standartRouteHandler_photoalbum_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "standartRouteHandler_review"
+    ADD CONSTRAINT "standa_photos_id_aefd7469_fk_standartRouteHandler_photoalbum_id" FOREIGN KEY (photos_id) REFERENCES "standartRouteHandler_photoalbum"(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2181 (class 2606 OID 16770)
+-- Name: standa_photos_id_e1e2389e_fk_standartRouteHandler_photoalbum_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "standartRouteHandler_event"
+    ADD CONSTRAINT "standa_photos_id_e1e2389e_fk_standartRouteHandler_photoalbum_id" FOREIGN KEY (photos_id) REFERENCES "standartRouteHandler_photoalbum"(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2193 (class 2606 OID 16732)
+-- Name: standar_sight_id_a6bd51fd_fk_standartRouteHandler_sightplace_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "standartRouteHandler_sightreview"
+    ADD CONSTRAINT "standar_sight_id_a6bd51fd_fk_standartRouteHandler_sightplace_id" FOREIGN KEY (sight_id) REFERENCES "standartRouteHandler_sightplace"(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2184 (class 2606 OID 16764)
+-- Name: standartRo_review_id_11536260_fk_standartRouteHandler_review_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "standartRouteHandler_eventreview"
+    ADD CONSTRAINT "standartRo_review_id_11536260_fk_standartRouteHandler_review_id" FOREIGN KEY (review_id) REFERENCES "standartRouteHandler_review"(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2192 (class 2606 OID 16727)
+-- Name: standartRo_review_id_89486998_fk_standartRouteHandler_review_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "standartRouteHandler_sightreview"
+    ADD CONSTRAINT "standartRo_review_id_89486998_fk_standartRouteHandler_review_id" FOREIGN KEY (review_id) REFERENCES "standartRouteHandler_review"(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2178 (class 2606 OID 16685)
+-- Name: standartRout_coord_id_2ac3cac5_fk_standartRouteHandler_coord_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "standartRouteHandler_coordlist"
+    ADD CONSTRAINT "standartRout_coord_id_2ac3cac5_fk_standartRouteHandler_coord_id" FOREIGN KEY (coord_id) REFERENCES "standartRouteHandler_coord"(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2183 (class 2606 OID 16697)
+-- Name: standartRout_event_id_b34eae59_fk_standartRouteHandler_event_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "standartRouteHandler_eventreview"
+    ADD CONSTRAINT "standartRout_event_id_b34eae59_fk_standartRouteHandler_event_id" FOREIGN KEY (event_id) REFERENCES "standartRouteHandler_event"(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2180 (class 2606 OID 16691)
+-- Name: standart_coord_id_67037edc_fk_standartRouteHandler_coordlist_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "standartRouteHandler_event"
+    ADD CONSTRAINT "standart_coord_id_67037edc_fk_standartRouteHandler_coordlist_id" FOREIGN KEY (coord_id) REFERENCES "standartRouteHandler_coordlist"(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2186 (class 2606 OID 16703)
+-- Name: standart_coord_id_94f50793_fk_standartRouteHandler_coordlist_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "standartRouteHandler_news"
+    ADD CONSTRAINT "standart_coord_id_94f50793_fk_standartRouteHandler_coordlist_id" FOREIGN KEY (coord_id) REFERENCES "standartRouteHandler_coordlist"(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2194 (class 2606 OID 16739)
+-- Name: standart_ooord_id_2d7b2102_fk_standartRouteHandler_coordlist_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "standartRouteHandler_travelsways"
+    ADD CONSTRAINT "standart_ooord_id_2d7b2102_fk_standartRouteHandler_coordlist_id" FOREIGN KEY (ooord_id) REFERENCES "standartRouteHandler_coordlist"(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2207 (class 2606 OID 25357)
+-- Name: tour_point_image_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY tour_point
+    ADD CONSTRAINT tour_point_image_id_fkey FOREIGN KEY (image_id) REFERENCES photos_urls(id);
+
+
+--
+-- TOC entry 2209 (class 2606 OID 25372)
+-- Name: tours_to_points_point_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY tours_to_points
+    ADD CONSTRAINT tours_to_points_point_id_fkey FOREIGN KEY (point_id) REFERENCES tour_point(id);
+
+
+--
+-- TOC entry 2208 (class 2606 OID 25367)
+-- Name: tours_to_points_tours_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY tours_to_points
+    ADD CONSTRAINT tours_to_points_tours_id_fkey FOREIGN KEY (tours_id) REFERENCES tours(id);
+
+
+--
+-- TOC entry 2375 (class 0 OID 0)
+-- Dependencies: 5
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+-- Completed on 2016-12-01 04:39:24
+
+--
+-- PostgreSQL database dump complete
+--
+

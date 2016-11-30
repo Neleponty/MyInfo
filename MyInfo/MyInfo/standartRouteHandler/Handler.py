@@ -18,7 +18,13 @@ class NewsSerializer(HyperlinkedModelSerializer):
         model = SimpleModel.News
         fields = ('id', 'pub_date', 'header', 'content', 'likes', 'is_fav')
 
-1
+class GetNewsAll(APIView):
+    def get(self, request, categoryId):
+        query = SimpleModel.News.objects.all()
+        return Response(NewsSerializer(query).data)
+
+
+#1
 class GetNewsToCategory(APIView):
     def get(self, request, categoryId):
         query = SimpleModel.News.objects.get(category=categoryId)
