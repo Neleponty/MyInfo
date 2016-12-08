@@ -5,6 +5,8 @@ from sklearn.feature_extraction.text import TfidfTransformer, TfidfVectorizer, C
 import numpy
 import scipy
 import Serializers
+from WikiRelations import *
+from Usefull import twogrammAnalys
 
 PATH_TO_MORPHY = 'C:\\Users\\Nikita\\myenv\\MyInfo\\MyInfo\\textProcesser\\example3.txt'
 PATH_TO_OTHER = 'C:\\Users\\Nikita\\myenv\\MyInfo\\MyInfo\\textProcesser\\example1.txt'
@@ -31,74 +33,121 @@ def prepareStopwords():
     return stopwords_result
 
 
+def loadKeywords():
+    keys = open("I:\\keywords.txt", 'r', encoding='utf-8').readlines()
+    dict = {}
+
+    for key in keys:
+        dict.update([(key, 0),])
+
+    return dict
 
 class SimpleDataProcessor:
+
+    dict_POS = {
+        'NOUN': 1,
+        'ADJF': 2,
+        'ADJS': 3,
+        'COMP': 4,
+        'VERB': 5,
+        'INFN': 6,
+        'PRTF': 7,
+        'PRTS': 8,
+        'GRND': 9,
+        'NUMR': 10,
+        'ADVB': 11,
+        'NPRO': 12,
+        'PRED': 13,
+        'PREP': 14,
+        'CONJ': 15,
+        'PRCL': 16,
+        'INTJ': 17
+    }
+
+    dict_case = {
+        'nomn': 1,
+        'gent': 2,
+        'datv': 3,
+        'accs': 4,
+        'ablt': 5,
+        'loct': 6,
+        'voct': 7,
+        'gen2': 8,
+        'acc2': 9,
+        'loc2': 10
+    }
+
     TF_IDF_THRESHOLD = 0.2
     stopwords = []
     word_column_num = {}
-    # analyzer_stem = pymystem3.Mystem()
     analyzer = []
     parser = None
+    keywords = {}
 
-    def __init__(self):
-        self.stopwords = prepareStopwords()
+    # ToDo Рутез и википедия
+    def __init__(self, stopwords, keywords):
+        self.stopwords = stopwords
+        self.keywords = keywords
         self.analyzer = pymorphy2.MorphAnalyzer()
         self.parser = MinidomParser(stemmer=self.analyzer, stopwords=self.stopwords)
 
-    def countFrequencyMatrix(self, text_items):
-        A = numpy.zeros((len(text_items), len(self.word_column_num)))
-        i = 0
-        for item in text_items:  # Подсчет frequency
-            for k, v in item.distribution.items():
-                n_j = self.word_column_num[k.encode('utf-8').decode('utf-8')]
-                A[i, n_j] = v
-            i += 1
-        return A
+    def fit(self, documents, Y, posterior):
+        # отбор по регрессии
+        twogramms = self.twogramm_relevant(documents)
+        ngramms = self.ngramm_relevant(documents, 4)
+        return twogramms
 
-    def getWordTfIdfFrequency(self, text_items, all_words, idf=True):
+    #todo то же самое в байесовском алгоритме
+    def vectorize(self, ngramm):
+        None
 
-        column_count = 0
-        for word in all_words:
-            self.word_column_num.update([(word, column_count), ])
-            column_count += 1
+    def ngramm_relevant(self, documents):
+        counter = CountVectorizer(stop_words=self.stopwords, ngram_range=(1, 3))
+        counter.fit_transform(documents)
+        ngramms = twogrammAnalys(counter, documents)
+        # smth heruistic
+        return self.ngrammHeruisticalFilter(ngramms.keys())
 
-        A = self.countFrequencyMatrix(text_items)
-        scipy.sparse.csc_matrix(A)  # обработка разреженности
-        result = scipy.sparse.csc_matrix(TfidfTransformer(use_idf=idf).fit_transform(A))
-        return A, result  # log ( n / df(d, t) ) + 1
+    def simpleRelevant(self, text, control_result):
 
+        counter = CountVectorizer(stop_words=self.stopwords, ngram_range=(1, 3))
+        counter.fit_transform(text)
+        return self.ngrammHeruisticalFilter(counter.vocabulary_.keys())
 
-    # может оценивать вероятность того, что (key|w1,w2,w3)
-    #
-    def equalAnalyse(self, ngramm, ngramm2):
-        for i in ngramm:
-            if i not in ngramm2:
-                return False
-        return True
-
-    def equal(self, ngramm, ngramm2):
-
-        for i in ngramm:
-            if i not in ngramm2:
-                return False
-        return True
+    def simplePredict(self, text):
+        print('vectorize')
+        counter = CountVectorizer(stop_words=self.stopwords, ngram_range=(1, 3))
+        counter.fit_transform(text)
+        print('end')
+        return self.ngrammHeruisticalFilter(counter.vocabulary_.keys())
 
 
+    def predict(self, text):
+        return self.algorithm.predict(text)
 
-    def isNamed(self, text_item):
-        return 'NOUN' in text_item.morphology()
+    def checkStatistics(self, keywords, control_key_words):
+        TP = 0
+        FP = 0
+        len_base = len(control_key_words)
 
-    def isNamedEntity(self, term):
-        return False
+        for thermin in keywords:
+            if thermin in control_key_words:
+                TP += 1
+            else:
+                FP += 1
 
-    def checkInFile(self, file, termin):
-        result = 0
+        FN = len_base - TP
+        TN = len_base - FN
+        Precision = TP / (TP + FP + 1)
+        Recall = TP / (TP + FN + 1)
+        FMeasure = 2 * (Precision * Recall) / (Precision + Recall + 1)
 
-        with file:
-            for line in file:
-                # Аккумулируем совпадения
-                result =+ self.rangDistance(termin,line)
-        return result/len(termin.split())
+        return {'Precision': Precision, 'Recall': Recall, 'Fmeasure': FMeasure}
+
+    def getWordTfIdfFrequency (self, normalized_douments):
+        tf = TfidfVectorizer()
+        result = tf.fit_transform(normalized_douments)
+        return tf,result
 
 
     #def ngrammStatistics(self):
@@ -141,155 +190,74 @@ class SimpleDataProcessor:
         sort = sorted(result,key = lambda own: own[1] )
         return sort[-1000:-1]
 
-    # расстояние левенштейна - > the same as normal_form
-    # def levenstainDistance(self,term,term2):
-    # если {W} - попарно независимы,то p(w|wi) = p(w)*p(wi)
-    # если {W} - совместно независимы,то p(w|W) = p(w1)*p(w2)....p(wn)
-    def twogrammAnalys(self, ngramm_counter, text_items):
-        counted = CountVectorizer()
-        garbage = counted.fit_transform([' '.join(item.words) for item in text_items])
-        diction = ngramm_counter.vocabulary_
-        words_twoplix = diction.keys()
-        probability = {}
+    # todo: Учитывать "Союза Писателей" -> "Союз писателей"
+    preferenced_morph_vectors = \
+        [('NOUN',),
+         ('ADJF','NOUN'),
+         ('NOUN','ADJF'),
+         ('PRTF','NOUN'),
+         ('NOUN','PRTF'),
+         ('NOUN', 'NOUN'),
+         ('NOUN', 'NOUN', 'NOUN'),
+         ('ADJF', 'ADJF', 'NOUN'),
+         ('ADJF', 'NOUN', 'ADJF'),
+         ('NOUN', 'ADJF', 'ADJF'),
+         ('ADJF', 'NOUN', 'NOUN'),
+         ('NOUN', 'ADJF', 'NOUN'),
+         ('NOUN', 'NOUN', 'ADJF'),
+         ]
 
-        # Частотный метод
-        for wordset in words_twoplix:
-
-            count_of_set = diction[wordset]
-            words_prob = []
-            posterior_distrib = count_of_set/sum(diction.values())
-            # p(w)
-            for word in wordset.split():
-                # Есть совпадение
-                word_count = counted.vocabulary_.get(word)
-                word_probability = word_count/(numpy.sum(garbage))
-                words_prob.append(word_probability)
-            apriorDistrib = 0
-
-            for item in words_prob:
-                apriorDistrib *= item
-            #
-            #Student's t-statistic
-        #    t_stat_dividor = math.sqrt(1/len(words_twoplix))
-            t_stat = math.fabs(apriorDistrib - posterior_distrib)
-            probability.update([(wordset,t_stat),])
-        # Word_probability
-
-        return probability
-
-
-    def ngrammHeruisticalFilter(self, ngramm_counter, ngramm_count):
-        #todo: Учитывать "Союза Писателей" -> "Союз писателей"
-        preferenced_morph_vectors = \
-            [[('ADJF','nomn'), ('NOUN','nomn')],
-             [('PRTF','nomn'), ('NOUN','nomn')],
-             [('NOUN','nomn'), ('NOUN','gent')],# gent падеж
-             [('NOUN','nomn'), ('NOUN','ablt')]]# ablt падеж
-
-        diction = ngramm_counter.vocabulary_
-        ngramms = diction.keys()
+    def ngrammHeruisticalFilter(self, ngramms):
         result_ngramms = []
+
         for ngramm in ngramms:
             therm_vector = []
+            morph_vector = []
             for word in ngramm.split():
                 therm_vector.append(word)
+                morph_vector.append(self.analyzer.parse(word)[0].tag.POS)
 
-            if self.morphVectorValidate(therm_vector, preferenced_morph_vectors, ngramm_count):
+            # Если в составе имя или геох
+            if self.morphVectorVectorizer(morph_vector,therm_vector ,self.preferenced_morph_vectors)[0]:
                 result_ngramms.append(therm_vector)
 
         return result_ngramms
 
     #todo Все или ничего
-    def morphVectorValidate(self, word_vectors, preferenced_vectors, gramm_count):
-        # error = 0
-        #
+    def morphVectorVectorizer(self, morph_vector, word_vector, preferenced_vectors):
+        value = 0
+    # Нормальный fulltext search needed
+#        for word in word_vector:
+ #           for keyword in self.keywords:
+  #              if word in keyword or self.analyzer.parse(word)[0].normal_form in keyword:
+   #                 value += 1
 
-        for i in range(len(word_vectors)):
-            morph = self.analyzer.parse(word_vectors[i])
-            # проверяем каждую строку preferences
-            for pr_vector in preferenced_vectors:
-                if morph[0].tag.POS == pr_vector[i][0] or morph[0].tag.case == pr_vector[i][1]:
-                    return True
-        return False
+        value /= len(word_vector)
+        t = ()
+        for word in morph_vector:
+            t += (word,)
 
-    def keyWords(self, text_items):
-        theMain = []
-        # ToDo: Фильтровать через словарь
-
-        for item in text_items:
-            for_one = []
-            for word in item.words:
-                if 'NOUN' in self.analyzer.parse(word)[0].tag:
-                    for_one.append(word)
-            theMain.append(for_one)
-
-        features = [' '.join(words) for words in theMain]
-        helper = CountVectorizer(stop_words=self.stopwords)
-        tfidfReslt = scipy.sparse.csc_matrix(helper.fit_transform(features))
-        bagWords = []
-        for item in helper.vocabulary_:
-            bagWords.append(item)
-
-        most_relevant = []
-        r, v = tfidfReslt.shape
-        for i in range(r):
-            result = []
-            for j in range(v):
-                result.append((bagWords[j], tfidfReslt[i, j]))
-            # print(sorted(result, key=lambda one: one[1])[-10:-1])
-            most_relevant.append(sorted(result, key=lambda one: one[1])[-10:-1])
-
-        # Todo: поставить в именительный
-
-        return most_relevant
+        if t in preferenced_vectors:
+            return True, value
+        return False, value
 
     def main(self):
         text_items = self.parser.getWordsItems(40)
         all_words = self.wordToCleanDictionary(text_items)  # Обработка text and features
 
-        print(self.getUselessWords(text_items, all_words))
-        print('###################################STOP#####################################')
-
-        most_relevant_each = self.keyWords(text_items)
-        for i in range(len(most_relevant_each)):
-            print(most_relevant_each)
-            print(text_items[i].checkStatistics(self.analyzer,most_relevant_each[i]))
-
-
-        counter = CountVectorizer(stop_words=self.stopwords, ngram_range=(2,2))
-        ngramms = counter.fit_transform([' '.join(item.words) for item in text_items])
-
-        THRESHOLD = 0.1
-        twogramm_relevant1 = self.twogrammAnalys(counter, text_items)
-        twogramm_relevant2 = self.ngrammHeruisticalFilter(counter, 2)
-
-        print(sorted(twogramm_relevant1, key = lambda one: one[1])[:-10])
-
-        # todo УЖАСНО НЕОК        print(len(twogramm_relevant2))
-
-
-        # todo: именную форму и согласование file = open("I:/keywords.txt",'r',encoding='utf-8')
-
-
-        #  Анализ заголовков
-        #  1. Расширить на n-граммы
-        #  2. Привести к согласованному описанию
-
+    #   r,v = t.shape
+    #   res = []
+    #   for i in range(v):
+    #       res.append(max([(item.toarray(), show[i]) for item in t[:, i]], key=lambda a: a[0]))
+    #   print(res)
 
     def wordToCleanDictionary(self, text_items):
         all_words = []
         for item in text_items:
             for word in item.words:
-                all_words.append(word)
+                n_word = self.analyzer.parse(word)[0].normal_form
+                all_words.append(n_word)
 
         all_words = list(set(all_words))
         return all_words
 
-
-# idea
-#    def buildMatrix(self, docs_items_by_id):
-#    return [[token in tokenize(doc_item)] for doc_item in docs_items_by_id]
-
-
-processor = SimpleDataProcessor()
-processor.main()

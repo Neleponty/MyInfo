@@ -1,12 +1,26 @@
-from Backend import MinidomParser,Word,TextItem
-import pymorphy2
-import math
-import numpy
-from ispras import texterra
-import matplotlib
+from Clustering import *
+from WikiRelations import *
+from Backend import *
 
-from sklearn.naive_bayes import MultinomialNB
+def wikies():
+    wikies = GetWikiRelation().docReader(10)
+    return [' '.join(wiki.words) for wiki in wikies]
+
+def docs():
+    return [' '.join(item.words) for item in MinidomParser().getWordsItems(10)]
 
 
+clusterManager = Clustering()
+counter, tfidf = clusterManager.prepareTfIdf(wikies())
+vocabulary = counter.vocabulary_
+#covariance_matrix = clusterManager.convertToCovariance(tfidf)
+r,c = tfidf.shape
+named_array = []
 
-t = texterra.API('b1c2d3f2250ac8e43a5e7633d83817b18f6ee84e')
+for row in range(r):
+    for column in range(c):
+        row_vector = tfidf[row:]
+
+
+sorted = [[column for column in covariance_matrix[row:]] for row in range(r)]
+

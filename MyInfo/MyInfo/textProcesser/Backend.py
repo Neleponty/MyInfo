@@ -13,28 +13,20 @@ class MinidomParser:
         self.stemmer = stemmer
         self.stopwords = stopwords
 
-    def LoadFromJson(self, text):
-
-        file = open('C:\\Users\\Nikita\\myenv\\MyInfo\\MyInfo\\textProcesser\\ToParseSample1.txt', mode='w',
-                    encoding='utf-8-sig')
-        file.write(text)
-        subprocess.Popen('C:\\Users\\Nikita\\myenv\\MyInfo\\MyInfo\\textProcesser\\Smth.bat',
-                         cwd='C:\\Users\\Nikita\\myenv\\MyInfo\\MyInfo\\textProcesser\\')
-
-        supermassiv = json.load(file)
-
     def getWordsItems(self, howMatch, tokenize=True):
         file = open('C:\\Users\\Nikita\\myenv\\MyInfo\\MyInfo\\textProcesser\\xmlWikiOrderByDate.xml', encoding='utf-8')
         dom = minidom.parse(file)
         items_array = dom.getElementsByTagName('page')
         list_of_items = []
-        if howMatch > len(items_array): howMatch = len(items_array)
+
+        if howMatch > len(items_array):
+            howMatch = len(items_array)
 
         for i in range(howMatch):
             parsed_item = self.textItemTemplate(items_array[i])
             if parsed_item is not None:
                 if tokenize:
-                    list_of_items.append(self.tokenize(parsed_item[1],parsed_item[1] + parsed_item[2], parsed_item[3]))
+                    list_of_items.append(self.tokenize(parsed_item[1], parsed_item[1] + parsed_item[2], parsed_item[3]))
                 else:
                     list_of_items.append(parsed_item[2])
         return list_of_items
@@ -42,13 +34,14 @@ class MinidomParser:
     def tokenize(self,title, string, key_words):
         words = self.splitAndReturn(string, 1)
         return TextItem(title, words, key_words)
-#######################################################333
+
+    #######################################################333
     def splitAndReturn(self, text, weight):
         values = []
         for text in re.findall(r'(?u)\b\w\w+\b', text):
             analysed = self.stemmer.parse(text)
-
             values.append(Word(analysed, weight))
+
         return values
 
     # ============================= hardware
@@ -89,7 +82,7 @@ class TextItem:
     date = datetime.datetime.now().time
     full_info_words = []
 
-    def __init__(self, title,words, control_key_words):
+    def __init__(self, title, words, control_key_words):
         self.title = title
         self.words = [word.word for word in words]
         self.full_info_words = [word for word in words]
@@ -106,27 +99,6 @@ class TextItem:
                 distrib.update([(word, 1), ])
 
         return distrib
-
-    def checkStatistics(self,analyzer, keywords):
-        TP = 0
-        FP = 0
-        len_base = len(self.control_key_words)
-
-        for thermin in keywords:
-            if thermin in self.control_key_words:
-                TP += 1
-            else:
-                FP += 1
-
-        FN = len_base - TP
-        TN = len_base - FN
-        Precision = TP/(TP + FP + 1)
-        Recall = TP/(TP+FN + 1)
-        FMeasure = 2*(Precision*Recall)/(Precision + Recall + 1)
-
-        return {'Precision': Precision, 'Recall': Recall, 'Fmeasure': FMeasure}
-
-
 
 class Word():
     word = ''

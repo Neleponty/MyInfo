@@ -1,21 +1,20 @@
 from sklearn.naive_bayes import MultinomialNB
 import re
 from Backend import MinidomParser, Word, TextItem
-
 import pymorphy2
 import math
+from WikiRelations import GetWikirelation
 
 analyzer = pymorphy2.MorphAnalyzer()
-stop = ['', ]
-items = MinidomParser(analyzer, stop).getWordsItems(1, tokenize=True)
-
+#stop = ['', ]
+#items = MinidomParser(analyzer, stop).getWordsItems(1, tokenize=True)
 
 def extractNgramms(n, words):
     result = []
     start = 0
 
     while start < len(words):
-        result.append(words[start: start + n])
+        result.append((words[start: start + n], (start,start+n)))
         if start + n > len(words):
             start = len(words)
         start += 1
@@ -27,7 +26,6 @@ def levensteinDistance(therm, therm_to_check):
     difference = math.fabs(len(therm) - len(therm_to_check))
     therm1 = [word.lower() for word in therm_to_check.split()]
     therm2 = [word.lower() for word in therm.split()]
-
     for i in range(min(len(therm1), len(therm2))):
         # предпологаем наивную конструкцию, вставка всегда хуже,чем изменение
         # O(n)
@@ -56,9 +54,9 @@ def search(text_words, keywords):
 
     return words
 
-print('###################')
-print(search(items[0].words,items[0].control_key_words))
-print('###################')
+#print('###################')
+#print(search(items[0].words,items[0].control_key_words))#
+#print('###################')
 
 
 # 1. научиться находить делители Ngramm
@@ -128,12 +126,12 @@ def GetDistribOfTitles(titles):
     count = sum([item[1] for item in counted_uniques])
 
 
-words = [item.control_key_words for item in items]
-inputs = []
-for word in words:
-    for input in word:
-        inputs.append(input)
-GetDistribOfTitles(inputs)
+#words = [item.control_key_words for item in items]
+#inputs = []
+#for word in words:
+#    for input in word:
+#        inputs.append(input)
+#GetDistribOfTitles(inputs)
 
 
 # Распределение Студента нужно?
@@ -149,7 +147,7 @@ GetDistribOfTitles(inputs)
 ##############################################################
 
 # Выделить все статистики в тексте. для каждого keyword - статистики всех вхождений
-def morphVector_in_Norm_form(text_keywords, text_words, window):
+def morphVector(text_keywords, text_words, window):
     text_statistic = []
     # все статистики в тексте
     for keyword in text_keywords:
@@ -173,14 +171,13 @@ def morphVector_in_Norm_form(text_keywords, text_words, window):
     return text_statistic
 
 
-# Все совпадения наборы слов <-> текстов
 def KeyWordParamsDistrib(keywords, texts, window):
     assert (len(keywords) == len(texts))
     all_text_statistics = []
     # todo: приведение именных сущностей к нормальной форме
     for i in range(len(texts)):
         # [**text1** [[(keyword1,статистики_nearby_keyword1)], [*****], ], [статистики_nearby_слово2, [*****] ], ]
-        one_text_statistic = morphVector_in_Norm_form(keywords[i], texts[i], window)
+        one_text_statistic = morphVector(keywords[i], texts[i], window)
         all_text_statistics.append(one_text_statistic)
     return all_text_statistics
 
@@ -211,6 +208,7 @@ class FeatureVariants:
     def __init__(self, class_names):
         self.class_names = class_names
 
+    # feature_value содержит морфологические признаки объекта(слова или n-gramm-а)
     def recalc(self, feature_value, class_v):
         if feature_value in self.feature_values.keys():
             self.feature_values[feature_value].recalc(class_v)
@@ -222,31 +220,61 @@ class FeatureVariants:
             self.feature_values[feature_value].probability(class_v)
 
 
+
+
+
 # Сформировать статистики из текстов
 class BayesanClassifier():
     N = 0
+    # для каждого слова в окне
     features = []
-    alphas = []
 
     # window {words, c_word, words}
-    def __init__(self, class_names, class_apriors, window, analyzer):
+    def __init__(self, class_names, window, analyzer):
         self.analyzer = analyzer
         self.window = window
         self.class_names = class_names
-        self.alphas = class_apriors
+        # alphas
+
+
+    # tuple длины 2*window + 1
+    # input: ''
 
     def fit(self, features_values_tuples, class_v):
+        assert(len(features_values_tuples) == 2*self.window + 1)
         self.N += 1
-        for i in range(self.window):
+        for i in range(2*self.window + 1):
+            # Список морф или иных характеристик (все характеристики - один объект)
+            # Любое деление - неприемлимо
             for feature_value in features_values_tuples[i]:
                 self.features[i].recalc(feature_value, class_v[i])
-
-    def precision(self, feature_tuple):
+    # {w(i)}
+    def precision(self, features_tuple):
         all_prob = []
         for i in range(self.class_names):
             class_prob = 1
-            for feature_value in feature_tuple:
+            for feature_value in features_tuple:
                 class_prob *= feature_value.precision(feature_value, self.class_names[i])
             all_prob.append((self.class_names[i], class_prob))
 
         return sorted(all_prob, key=lambda a: a[1])
+
+
+class FeatureBuilder:
+
+
+    def prepareTextFeatures(self, ngramms, analyzer):
+        n = len(ngramms[0])
+        result = []
+        for gramm in ngramms:
+            ngramm_char = ''
+            for i in range(n):
+                parsed = analyzer.parse(gramm[i])[0]
+                pos = parsed.tag.POS
+                case = parsed.tag.case
+
+                if pos is not None and case is not None:
+                    ngramm_char += (str(pos) + str(case)) + ' '
+            result.append(ngramm_char)
+        return result
+

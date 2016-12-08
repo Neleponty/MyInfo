@@ -11,7 +11,7 @@ from django.db import models
 
 
 class Attractions(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.TextField()
     coord = models.TextField()
     description = models.TextField(blank=True, null=True)
@@ -26,7 +26,7 @@ class Attractions(models.Model):
 
 class Categories(models.Model):
     name = models.CharField(max_length=100)
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
 
     class Meta:
         managed = False
@@ -36,7 +36,7 @@ class Categories(models.Model):
 class CategoriesLinks(models.Model):
     parent_id = models.IntegerField()
     child_id = models.IntegerField()
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
 
     class Meta:
         managed = False
@@ -44,7 +44,7 @@ class CategoriesLinks(models.Model):
 
 
 class LocationNewsEvent(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     news = models.ForeignKey('News', models.DO_NOTHING)
     coord = models.TextField()
 
@@ -54,23 +54,28 @@ class LocationNewsEvent(models.Model):
 
 
 class PhotosUrls(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     path = models.CharField(max_length=300)
+
+    def setPath(self,id,path):
+        self.id = id
+        self.path = path
+        return self
 
     class Meta:
         managed = False
         db_table = 'photos_urls'
 
-
 class News(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     pub_date = models.DateTimeField()
+  #  name = models.CharField(max_length=2000)
     header = models.CharField(max_length=-1)
     content = models.TextField()
     category = models.ForeignKey(Categories, models.DO_NOTHING, db_column='id_categ')
     is_fav = models.BooleanField()
     likes = models.IntegerField()
-    image = models.ForeignKey('PhotosUrls', models.DO_NOTHING)
+    image = models.ForeignKey('PhotosUrls', models.DO_NOTHING, null=True)
     scale = models.IntegerField(blank=True, null=True)
     photos = models.ManyToManyField(PhotosUrls,
                                     through='NewsPhotos',
@@ -82,17 +87,22 @@ class News(models.Model):
 
 
 class NewsPhotos(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     photo = models.ForeignKey('PhotosUrls', models.DO_NOTHING)
     news = models.ForeignKey('News', models.DO_NOTHING)
 
+    def setPhoto(self, id, photo, news):
+        self.id = id
+        self.news = news
+        self.photo = photo
+        return self
     class Meta:
         managed = False
         db_table = 'news_photos'
 
 
 class Opinions(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     pub_date = models.DateTimeField()
     title = models.TextField()
     headline = models.TextField(blank=True, null=True)
@@ -109,7 +119,7 @@ class Opinions(models.Model):
 
 
 class OpinionsImages(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     opinion = models.ForeignKey('Opinions', models.DO_NOTHING)
     photo = models.ForeignKey('PhotosUrls', models.DO_NOTHING)
 
@@ -119,7 +129,7 @@ class OpinionsImages(models.Model):
 
 
 class OpinionsLocations(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     opinion_id = models.IntegerField()
     coord = models.TextField()
 
@@ -129,7 +139,7 @@ class OpinionsLocations(models.Model):
 
 
 class OpinionsToTags(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     opinions = models.ForeignKey(Opinions, models.DO_NOTHING)
     tags = models.ForeignKey('Tags', models.DO_NOTHING)
 
@@ -139,7 +149,7 @@ class OpinionsToTags(models.Model):
 
 
 class PhotoAlbumsTitle(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.TextField()
     description = models.TextField(blank=True, null=True)
     title_image = models.ForeignKey('PhotosUrls', models.DO_NOTHING, db_column='title_image', blank=True, null=True)
@@ -153,7 +163,7 @@ class PhotoAlbumsTitle(models.Model):
 
 
 class PhotosInAlbums(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     album = models.ForeignKey('PhotoAlbumsTitle', models.DO_NOTHING)
     photo = models.ForeignKey('PhotosUrls', models.DO_NOTHING)
 
@@ -163,7 +173,7 @@ class PhotosInAlbums(models.Model):
 
 
 class Tags(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.TextField()
 
     class Meta:
@@ -172,7 +182,7 @@ class Tags(models.Model):
 
 
 class TourPoint(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.TextField()
     coordinates = models.TextField()
     description = models.TextField(blank=True, null=True)
@@ -184,7 +194,7 @@ class TourPoint(models.Model):
 
 
 class Tours(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.TextField()
     description = models.TextField(blank=True, null=True)
 
@@ -194,7 +204,7 @@ class Tours(models.Model):
 
 
 class ToursToPoints(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     tours = models.ForeignKey(Tours, models.DO_NOTHING)
     point = models.ForeignKey(TourPoint, models.DO_NOTHING)
 
@@ -204,7 +214,7 @@ class ToursToPoints(models.Model):
 
 
 class Users(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     login = models.TextField()
     name = models.TextField(blank=True, null=True)
     hashpass = models.TextField()

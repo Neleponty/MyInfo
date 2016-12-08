@@ -16,6 +16,8 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from MyInfo.standartRouteHandler import Handler
+from MyInfo.standartRouteHandler import parser_e1
+parser_e1.ParserE1().start(100)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
