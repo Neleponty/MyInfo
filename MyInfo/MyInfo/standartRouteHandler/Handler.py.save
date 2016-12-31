@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from django.http.response import HttpResponse
 from rest_framework import status
 from rest_framework.serializers import HyperlinkedModelSerializer
-from MyInfo.standartRouteHandler import SimpleModel
+from standartRouteHandler import SimpleModel
 from django.core import serializers
 
 
@@ -13,7 +13,7 @@ class AttractionsSerializer(HyperlinkedModelSerializer):
         fields = ('id', 'name', 'coord', 'description', 'image')
 
 
-class NewsSerializer(HyperlinkedModelSerializer):
+class NewsSerializer(HyperlinkedModelSerializer, many = True):
     class Meta:
         model = SimpleModel.News
         fields = ('id', 'pub_date', 'header', 'content', 'likes', 'is_fav')
@@ -89,7 +89,7 @@ class GetLocationsToOpinions(APIView):
 class GetNews(APIView):
     def get(self, request):
         query = SimpleModel.News.objects.all()
-        return Response(NewsSerializer(query,many=True).data)
+        return Response(NewsSerializer(query).data)
 
 
 class CategorySerializer(HyperlinkedModelSerializer):
