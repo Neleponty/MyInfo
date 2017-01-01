@@ -15,9 +15,17 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from standartRouteHandler import Handler
-"""from standartRouteHandler import parser_e1
-parser_e1.ParserE1().start(100)"""
+from django.http import HttpResponse
+from django.views.generic import View
+
+class MyView(View):
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse('Hello, World!')
+
+"""from standartRouteHandler import Handler
+from standartRouteHandler import parser_e1
+parser_e1.ParserE1().start(100)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -30,4 +38,8 @@ urlpatterns = [
     url(r'^photos/newsId=(?P<newsId>\d*)', Handler.PhotosToNews.as_view()),
     url(r'^album/', Handler.GetAlbum.as_view()),
     url(r'^album/photos/albumId=(?P<albumId>\d*)', Handler.ImagesForAlbum.as_view())
+]
+"""
+urlpatterns =[
+	url('',MyView.as_view())
 ]
