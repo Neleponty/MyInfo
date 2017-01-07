@@ -19,7 +19,7 @@ from MyInfo.proj import Handler
 from MyInfo.proj import parser_e1
 import threading
 """
-t1 = threading.Thread(target=parser_e1.ParserE1().start,args=(100,))
+t1 = threading.Thread(target=parser_e1.ParserE1().start)
 t1.start()
 """
 

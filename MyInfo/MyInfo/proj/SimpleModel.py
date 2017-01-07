@@ -3,7 +3,7 @@
 #   * Rearrange models' order
 #   * Make sure each model has one field with primary_key=True
 #   * Make sure each ForeignKey has `on_delete` set to the desired behavior.
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
+#   * Remove `managed = True` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from __future__ import unicode_literals
 
@@ -18,7 +18,7 @@ class Attractions(models.Model):
     image = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'attractions'
 
 
@@ -29,7 +29,7 @@ class Categories(models.Model):
     id = models.AutoField(primary_key=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'categories'
 
 
@@ -39,17 +39,17 @@ class CategoriesLinks(models.Model):
     id = models.AutoField(primary_key=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'categories_links'
 
 
 class LocationNewsEvent(models.Model):
     id = models.AutoField(primary_key=True)
-    news = models.ForeignKey('News', models.DO_NOTHING)
+    news = models.ForeignKey('News', models.DO_NOTHING,null = True)
     coord = models.TextField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'location_news_event'
 
 
@@ -63,17 +63,16 @@ class PhotosUrls(models.Model):
         return self
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'photos_urls'
 
 class News(models.Model):
     id = models.AutoField(primary_key=True)
     pub_date = models.DateTimeField()
-    name = models.CharField(max_length=2000)
     header = models.CharField(max_length=2000)
     content = models.TextField()
     category = models.ForeignKey(Categories, models.DO_NOTHING, db_column='id_categ')
-    is_fav = models.BooleanField()
+    is_fav = models.IntegerField()
     likes = models.IntegerField()
     image = models.ForeignKey('PhotosUrls', models.DO_NOTHING, null=True)
     scale = models.IntegerField(blank=True, null=True)
@@ -82,7 +81,7 @@ class News(models.Model):
                                     through_fields=('photo', 'news'))
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'news'
 
 
@@ -97,7 +96,7 @@ class NewsPhotos(models.Model):
         self.photo = photo
         return self
     class Meta:
-        managed = False
+        managed = True
         db_table = 'news_photos'
 
 
@@ -114,7 +113,7 @@ class Opinions(models.Model):
 
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'opinions'
 
 
@@ -124,7 +123,7 @@ class OpinionsImages(models.Model):
     photo = models.ForeignKey('PhotosUrls', models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'opinions_images'
 
 
@@ -134,7 +133,7 @@ class OpinionsLocations(models.Model):
     coord = models.TextField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'opinions_locations'
 
 
@@ -144,7 +143,7 @@ class OpinionsToTags(models.Model):
     tags = models.ForeignKey('Tags', models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'opinionstotags'
 
 
@@ -158,7 +157,7 @@ class PhotoAlbumsTitle(models.Model):
                                     through_fields=('photo', 'album'))
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'photoalbums_title'
 
 
@@ -168,7 +167,7 @@ class PhotosInAlbums(models.Model):
     photo = models.ForeignKey('PhotosUrls', models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'photos_in_albums'
 
 
@@ -177,7 +176,7 @@ class Tags(models.Model):
     name = models.TextField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'tags'
 
 
@@ -189,7 +188,7 @@ class TourPoint(models.Model):
     image = models.ForeignKey(PhotosUrls, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'tour_point'
 
 
@@ -199,7 +198,7 @@ class Tours(models.Model):
     description = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'tours'
 
 
@@ -209,7 +208,7 @@ class ToursToPoints(models.Model):
     point = models.ForeignKey(TourPoint, models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'tours_to_points'
 
 
@@ -220,7 +219,7 @@ class Users(models.Model):
     hashpass = models.TextField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'users'
 
 

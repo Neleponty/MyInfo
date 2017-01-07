@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'MyInfo.wsgi.application'
 DATABASES = {
     'default': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': 'newpostgres',
+    'NAME': 'test2',
     'USER': 'postgres',
     'PASSWORD': '1',
     'HOST': 'localhost', # Set to empty string for localhost.
