@@ -25,7 +25,7 @@ SECRET_KEY = '-va^+)xw7rwg$eyj66!1zqztpco%x3(_ntgidk2#5n8@(^f$vu'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['35.165.196.129',]
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -37,8 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'MyInfo.standartRouteHandler',
-    'MyInfo.textProcesser',
+    'MyInfo.proj',
     'rest_framework',
 
 ]
@@ -76,7 +75,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'wsgi.application'
+WSGI_APPLICATION = 'MyInfo.wsgi.application'
 
 
 # Database
@@ -85,9 +84,9 @@ WSGI_APPLICATION = 'wsgi.application'
 DATABASES = {
     'default': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': 'postgres',
+    'NAME': 'newpostgres',
     'USER': 'postgres',
-    'PASSWORD': 'F3xgl91A',
+    'PASSWORD': '1',
     'HOST': 'localhost', # Set to empty string for localhost.
     'PORT': '5432', # Set to empty string for default.
     }

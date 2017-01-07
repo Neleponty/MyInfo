@@ -15,31 +15,17 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from django.http import HttpResponse
-from django.views.generic import View
+from MyInfo.proj import Handler
+from MyInfo.proj import parser_e1
+import threading
+"""
+t1 = threading.Thread(target=parser_e1.ParserE1().start,args=(100,))
+t1.start()
+"""
 
-class MyView(View):
-
-    def get(self, request, *args, **kwargs):
-        return HttpResponse('Hello, World!')
-
-"""from standartRouteHandler import Handler
-from standartRouteHandler import parser_e1
-parser_e1.ParserE1().start(100)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'news/', Handler.GetNews.as_view()),
-    url(r'^categories/categoryId=(?P<categoryId>\d*)', Handler.GetNewsToCategory.as_view()),
-    url(r'^categories/', Handler.CategoriesApi.as_view()),
-    url(r'^news/location/newsId=(?P<newsId>\d*)', Handler.GetLocationsToNews.as_view()),
-    url(r'^opinions/location/opinionId=(?P<opinionId>\d*)', Handler.GetLocationsToOpinions.as_view()),
-    url(r'^opinions/opinionId=(?P<opinionId>\d*)', Handler.GetPhotosToOpinions.as_view()),
-    url(r'^photos/newsId=(?P<newsId>\d*)', Handler.PhotosToNews.as_view()),
-    url(r'^album/', Handler.GetAlbum.as_view()),
-    url(r'^album/photos/albumId=(?P<albumId>\d*)', Handler.ImagesForAlbum.as_view())
 ]
-"""
-urlpatterns =[
-	url('',MyView.as_view())
-]
+
